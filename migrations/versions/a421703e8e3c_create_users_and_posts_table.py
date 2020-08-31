@@ -1,4 +1,4 @@
-"""users and posts table
+"""create users and posts table
 
 Revision ID: a421703e8e3c
 Revises: 
