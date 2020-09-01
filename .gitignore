@@ -1,2 +1,5 @@
 # SQLite
 app.db
+
+# Logging
+/logs/
