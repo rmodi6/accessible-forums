@@ -3,3 +3,6 @@ app.db
 
 # Logging
 /logs/
+
+# Database
+/data/

@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 
 from flask import render_template, flash, redirect, url_for, request, g, \
@@ -8,7 +9,7 @@ from flask_login import current_user, login_required
 from app import db
 from app.main import bp
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
-from app.models import User, Post
+from app.models import User, Post, Thread
 
 
 @bp.before_app_request
@@ -137,13 +138,64 @@ def search():
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
     page = request.args.get('page', 1, type=int)
-    posts, total = Post.search(g.search_form.q.data, page,
-                               current_app.config['POSTS_PER_PAGE'])
+    threads, total = Thread.search(g.search_form.q.data, page,
+                                   current_app.config['POSTS_PER_PAGE'])
     next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
         if total > page * current_app.config['POSTS_PER_PAGE'] else None
     prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
         if page > 1 else None
-    return render_template('search.html', title=_('Search'), posts=posts,
+    return render_template('search.html', title=_('Forum threads that match your search'), threads=threads,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@bp.route('/searchPosts/<threadId>')
+@login_required
+def searchPosts(threadId):
+    thread_title = Thread.query.filter_by(id=threadId).first().title
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(threadId, page,
+                               current_app.config['POSTS_PER_PAGE'])
+    next_url = url_for('main.searchPosts', threadId=threadId, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.searchPosts', threadId=threadId, page=page - 1) \
+        if page > 1 else None
+    title = 'Thread : ' + thread_title
+    return render_template('searchPosts.html', title=_(title), posts=posts,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@bp.route('/parentPosts/<id>')
+@login_required
+def parentPosts(id):
+    page = request.args.get('page', 1, type=int)
+    parent_ids = Post.query.filter_by(id=id).first().parent_ids
+    parent_ids_list = ast.literal_eval(parent_ids)
+    posts = []
+    for p_ids in parent_ids_list:
+        posts.append(Post.query.filter_by(id=p_ids).first())
+    total = len(posts)
+
+    next_url = url_for('main.parentPosts', id=id, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.parentPosts', id=id, page=page - 1) \
+        if page > 1 else None
+    return render_template('searchPosts.html', title=_('Parent Posts'), posts=posts,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@bp.route('/childPosts/<postId>')
+@login_required
+def childPosts(postId):
+    parent_post = Post.query.filter_by(id=postId).first()
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(postId, page,
+                               current_app.config['POSTS_PER_PAGE'])
+    next_url = url_for('main.childPosts', postId=postId, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.childPosts', postId=postId, page=page - 1) \
+        if page > 1 else None
+    return render_template('searchChildPosts.html', title=_('Search'), posts=posts,
+                           parentPost=[parent_post],
                            next_url=next_url, prev_url=prev_url)
 
 

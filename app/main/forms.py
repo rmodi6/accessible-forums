@@ -29,12 +29,12 @@ class EmptyForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    post = TextAreaField(_l('Say something'), validators=[DataRequired()])
+    post = TextAreaField(_l('Create a Post'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
 
 class SearchForm(FlaskForm):
-    q = StringField(_l('Search'), validators=[DataRequired()])
+    q = StringField(_l('Type to search the forum'), validators=[DataRequired()])
 
     def __init__(self, *args, **kwargs):
         if 'formdata' not in kwargs:
