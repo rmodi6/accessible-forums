@@ -58,9 +58,9 @@ followers = db.Table(
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    email = db.Column(db.String(120), index=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
@@ -111,10 +111,23 @@ def load_user(id):
 
 
 class Post(SearchableMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __searchable__ = ['parent_ids', 'thread_id']
+    id = db.Column(db.String, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.String, db.ForeignKey('user.id'))
+    thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
+    parent_ids = db.Column(db.String(140))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+class Thread(SearchableMixin, db.Model):
+    __searchable__ = ['title']
+    id = db.Column(db.String, primary_key=True)
+    title = db.Column(db.String(140))
+    posts = db.relationship('Post', backref='', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Thread {}>'.format(self.title)
