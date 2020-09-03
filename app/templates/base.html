@@ -63,4 +63,7 @@
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
+    <script type="text/javascript">
+        {% include "plugins/js/bootstrap-accessibility.min.js" %}
+    </script>
 {% endblock %}
