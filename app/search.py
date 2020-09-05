@@ -1,3 +1,5 @@
+from elasticsearch_dsl import Search
+from elasticsearch_dsl.query import MultiMatch
 from flask import current_app
 
 
@@ -19,9 +21,8 @@ def remove_from_index(index, model):
 def query_index(index, query):
     if not current_app.elasticsearch:
         return [], 0
-    search = current_app.elasticsearch.search(
-        index=index,
-        body={'query': {'multi_match': {'query': query, 'fields': ['*'], 'fuzziness': "AUTO"}},
-              'size': current_app.config['POSTS_PER_PAGE']})
-    ids = [hit['_id'] for hit in search['hits']['hits']]
-    return ids, search['hits']['total']['value']
+    search = Search(using=current_app.elasticsearch, index=index).query(
+        MultiMatch(query=query, fuzziness='auto'))[:current_app.config['POSTS_PER_PAGE']]
+    response = search.execute()
+    ids = list(map(lambda hit: hit.meta.id, response))
+    return ids, response.hits.total

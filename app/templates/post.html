@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <a href="{{ url_for('main.parent_posts',child_post_id=post.id) }}">
+        <button> Back to Parent Posts</button>
+    </a>
+    <br>
+    <br>
+    {% include '_post.html' %}
+    <br>
+    {% if child_posts[0] %}
+        <h5 style="margin-left: 40px;"> Replies</h5>
+    {% endif %}
+    <div style="margin-left: 40px;">
+        {% for post in child_posts %}
+            {% include '_post.html' %}
+        {% endfor %}
+        <br>
+    </div>
+{% endblock %}

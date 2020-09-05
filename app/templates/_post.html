@@ -14,7 +14,7 @@
             {{ _('%(username)s said %(when)s',
                     username=user_link, when=moment(post.timestamp).fromNow()) }}
             <br>
-            <a href="{{ url_for('main.childPosts', postId =post.id) }}">
+            <a href="{{ url_for('main.post', post_id=post.id) }}">
                 {{ post.body }}
             </a>
         </td>

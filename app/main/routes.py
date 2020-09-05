@@ -117,32 +117,30 @@ def search():
     return render_template('search.html', title=_('Forum threads that match your search'), threads=threads)
 
 
-@bp.route('/searchPosts/<threadId>')
+@bp.route('/thread/<thread_id>')
 @login_required
-def searchPosts(threadId):
-    thread_title = Thread.query.filter_by(id=threadId).first().title
-    posts, total = Post.search(threadId)
+def thread(thread_id):
+    thread_title = Thread.query.filter_by(id=thread_id).first().title
+    posts = Post.query.filter_by(thread_id=thread_id)
     title = 'Thread : ' + thread_title
-    return render_template('searchPosts.html', title=_(title), posts=posts)
+    return render_template('thread.html', title=_(title), posts=posts)
 
 
-@bp.route('/parentPosts/<id>')
+@bp.route('/post/<post_id>')
 @login_required
-def parentPosts(id):
-    parent_ids = Post.query.filter_by(id=id).first().parent_ids
-    parent_ids_list = ast.literal_eval(parent_ids)
-    posts = []
-    for p_ids in parent_ids_list:
-        posts.append(Post.query.filter_by(id=p_ids).first())
-    return render_template('searchPosts.html', title=_('Parent Posts'), posts=posts)
+def post(post_id):
+    _post = Post.query.filter_by(id=post_id).first()
+    child_posts = Post.query.filter(Post.parent_ids.like("%'{}'%".format(post_id))).all()
+    return render_template('post.html', title=_('Search'), child_posts=child_posts, post=_post)
 
 
-@bp.route('/childPosts/<postId>')
+@bp.route('/post/parents/<child_post_id>')
 @login_required
-def childPosts(postId):
-    parent_post = Post.query.filter_by(id=postId).first()
-    posts, total = Post.search(postId)
-    return render_template('searchChildPosts.html', title=_('Search'), posts=posts, parentPost=[parent_post])
+def parent_posts(child_post_id):
+    parent_ids = Post.query.filter_by(id=child_post_id).first().parent_ids
+    parent_ids = ast.literal_eval(parent_ids)
+    _parent_posts = Post.query.filter(Post.id.in_(parent_ids)).all()
+    return render_template('thread.html', title=_('Parent Posts'), posts=_parent_posts)
 
 
 @bp.route('/help')
