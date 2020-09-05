@@ -14,4 +14,4 @@ class Config(object):
     BASE_DIR = basedir
     INIT_DB = os.environ.get('INIT_DB') or False
     LANGUAGES = ['en', 'es']
-    POSTS_PER_PAGE = 25
+    POSTS_PER_PAGE = 1000
