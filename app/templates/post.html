@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <a href="{{ url_for('main.parent_posts',child_post_id=post.id) }}">
+    <a href="{{ url_for('main.parent_posts', child_post_id=post.id) }}">
         <button> Back to Parent Posts</button>
     </a>
     <br>

@@ -12,9 +12,6 @@
 {% endblock %}
 
 {% block navbar %}
-    <a id='skip-nav' class='screenreader-text' href='#main-content'>
-        Skip Navigation
-    </a>
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -26,6 +23,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">Accessibility Blog</a>
+                <a id='skip-nav' class='screenreader-text' href='#main-content'>Skip Navigation</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -35,7 +33,11 @@
                 {% if g.search_form %}
                     <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
                         <div class="form-group">
-                            {{ g.search_form.q(size=40, class='form-control', placeholder=g.search_form.q.label.text, autofocus='true') }}
+                            {% if request.url_rule.endpoint == "main.index" %}
+                                {{ g.search_form.q(size=40, class='form-control', placeholder=g.search_form.q.label.text, autofocus='true') }}
+                            {% else %}
+                                {{ g.search_form.q(size=40, class='form-control', placeholder=g.search_form.q.label.text) }}
+                            {% endif %}
                         </div>
                     </form>
                 {% endif %}
