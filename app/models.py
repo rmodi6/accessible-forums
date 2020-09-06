@@ -1,3 +1,4 @@
+import ast
 from datetime import datetime
 from hashlib import md5
 
@@ -122,12 +123,28 @@ class Post(SearchableMixin, db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
+    def has_parent(self):
+        return len(self.parent_ids) > 2
+
+    def has_children(self):
+        return len(self.get_children()) > 0
+
+    def get_children(self):
+        return Post.query.filter(Post.parent_ids.like("%'{}'%".format(self.id))).all()
+
+    def get_siblings(self):
+        parent_ids = ast.literal_eval(self.parent_ids)
+        siblings = set()
+        for parent_id in parent_ids:
+            siblings.update(Post.query.filter(Post.parent_ids.like("%'{}'%".format(parent_id))).all())
+        return list(siblings)
+
 
 class Thread(SearchableMixin, db.Model):
     __searchable__ = ['title']
     id = db.Column(db.String, primary_key=True)
     title = db.Column(db.String(140))
-    posts = db.relationship('Post', backref='', lazy='dynamic')
+    posts = db.relationship('Post', backref='thread', lazy='dynamic')
 
     def __repr__(self):
         return '<Thread {}>'.format(self.title)

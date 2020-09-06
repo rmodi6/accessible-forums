@@ -12,9 +12,17 @@
         {% endset %}
         {{ _('%(username)s said %(when)s',
                     username=user_link, when=moment(post.timestamp).fromNow()) }}
-        <br>
-        <a href="{{ url_for('main.post', post_id=post.id) }}">
+        <br/>
+        <p>
             {{ post.body }}
-        </a>
+        </p>
+        <br/>
+        {% if post.has_parent() %}
+            <a href="{{ url_for('main.parent_posts', post_id=post.id) }}">Parent Posts</a>
+            <a href="{{ url_for('main.sibling_posts', post_id=post.id) }}">Sibling Posts</a>
+        {% endif %}
+        {% if post.has_children() %}
+            <a href="{{ url_for('main.post', post_id=post.id) }}">Child Posts</a>
+        {% endif %}
     </td>
 </tr>

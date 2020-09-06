@@ -1,15 +1,10 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <a href="{{ url_for('main.parent_posts', child_post_id=post.id) }}">
-        <button> Back to Parent Posts</button>
-    </a>
-    <br>
-    <br>
+    <h1>{{ _('Child Posts') }}</h1>
     <table class="table table-hover">
         {% include '_post.html' %}
     </table>
-    <br>
     {% if child_posts[0] %}
         <h5 style="margin-left: 40px;"> Replies</h5>
         <div style="margin-left: 40px;">
@@ -18,7 +13,6 @@
                     {% include '_post.html' %}
                 {% endfor %}
             </table>
-            <br>
         </div>
     {% endif %}
 {% endblock %}

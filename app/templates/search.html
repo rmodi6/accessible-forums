@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>{{ title }}</h1>
+    <h1>{{ _('Forum threads that match your search') }}</h1>
     {% for thread in threads %}
         {% include '_thread.html' %}
     {% endfor %}

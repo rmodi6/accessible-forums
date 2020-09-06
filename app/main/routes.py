@@ -114,33 +114,39 @@ def search():
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
     threads, total = Thread.search(g.search_form.q.data)
-    return render_template('search.html', title=_('Forum threads that match your search'), threads=threads)
+    return render_template('search.html', threads=threads)
 
 
 @bp.route('/thread/<thread_id>')
 @login_required
 def thread(thread_id):
-    thread_title = Thread.query.filter_by(id=thread_id).first().title
-    posts = Post.query.filter_by(thread_id=thread_id)
-    title = 'Thread : ' + thread_title
-    return render_template('thread.html', title=_(title), posts=posts)
+    _thread = Thread.query.filter_by(id=thread_id).first()
+    title = 'Thread : ' + _thread.title
+    return render_template('thread.html', title=title, posts=_thread.posts)
 
 
 @bp.route('/post/<post_id>')
 @login_required
 def post(post_id):
     _post = Post.query.filter_by(id=post_id).first()
-    child_posts = Post.query.filter(Post.parent_ids.like("%'{}'%".format(post_id))).all()
+    child_posts = _post.get_children()
     return render_template('post.html', title=_('Search'), child_posts=child_posts, post=_post)
 
 
-@bp.route('/post/parents/<child_post_id>')
+@bp.route('/post/parents/<post_id>')
 @login_required
-def parent_posts(child_post_id):
-    parent_ids = Post.query.filter_by(id=child_post_id).first().parent_ids
+def parent_posts(post_id):
+    parent_ids = Post.query.filter_by(id=post_id).first().parent_ids
     parent_ids = ast.literal_eval(parent_ids)
     _parent_posts = Post.query.filter(Post.id.in_(parent_ids)).all()
     return render_template('thread.html', title=_('Parent Posts'), posts=_parent_posts)
+
+
+@bp.route('/post/siblings/<post_id>')
+@login_required
+def sibling_posts(post_id):
+    _sibling_posts = Post.query.filter_by(id=post_id).first().get_siblings()
+    return render_template('thread.html', title=_('Sibling Posts'), posts=_sibling_posts)
 
 
 @bp.route('/help')
