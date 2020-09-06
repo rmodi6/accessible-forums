@@ -1,5 +1,7 @@
 {% extends 'bootstrap/base.html' %}
 
+{% block html_attribs %} lang="en" {% endblock %}
+
 {% block title %}
     {% if title %}{{ title }} - Accessibility Blog{% else %}{{ _('Welcome to Accessibility Blog') }}{% endif %}
 {% endblock %}
