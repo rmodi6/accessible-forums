@@ -6,15 +6,19 @@
     </a>
     <br>
     <br>
-    {% include '_post.html' %}
+    <table class="table table-hover">
+        {% include '_post.html' %}
+    </table>
     <br>
     {% if child_posts[0] %}
         <h5 style="margin-left: 40px;"> Replies</h5>
+        <div style="margin-left: 40px;">
+            <table class="table table-hover">
+                {% for post in child_posts %}
+                    {% include '_post.html' %}
+                {% endfor %}
+            </table>
+            <br>
+        </div>
     {% endif %}
-    <div style="margin-left: 40px;">
-        {% for post in child_posts %}
-            {% include '_post.html' %}
-        {% endfor %}
-        <br>
-    </div>
 {% endblock %}
