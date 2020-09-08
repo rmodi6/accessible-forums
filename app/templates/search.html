@@ -2,7 +2,11 @@
 
 {% block app_content %}
     <h1>{{ _('Forum threads that match your search') }}</h1>
-    {% for thread in threads %}
-        {% include '_thread.html' %}
-    {% endfor %}
+    {% if threads[0] %}
+        <table class="table table-hover">
+            {% for thread in threads %}
+                {% include '_thread.html' %}
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}

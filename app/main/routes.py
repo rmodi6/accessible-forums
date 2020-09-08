@@ -121,8 +121,7 @@ def search():
 @login_required
 def thread(thread_id):
     _thread = Thread.query.filter_by(id=thread_id).first()
-    title = 'Thread : ' + _thread.title
-    return render_template('thread.html', title=title, posts=_thread.posts)
+    return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
 
 
 @bp.route('/post/<post_id>')
