@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1><a href="{{ url_for('main.thread', thread_id=post.thread.id) }}">{{ post.thread.title }}</a></h1>
+    <a href="{{ url_for('main.thread', thread_id=post.thread.id) }}">Back to thread</a>
+    <h1>{{ post.thread.title }}</h1>
     <h2>{{ _('Child Posts') }}</h2>
     <table class="table table-hover">
-        {% include '_post.html' %}
+        <tbody>
+        {% with hide_child_posts_link=True %}
+            {% include '_post.html' %}
+        {% endwith %}
+        </tbody>
     </table>
     {% if child_posts[0] %}
         <h3 style="margin-left: 40px;">Replies</h3>
         <div style="margin-left: 40px;">
             <table class="table table-hover">
+                <tbody>
                 {% for post in child_posts %}
                     {% include '_post.html' %}
                 {% endfor %}
+                </tbody>
             </table>
         </div>
     {% endif %}

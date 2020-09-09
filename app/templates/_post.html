@@ -13,15 +13,17 @@
         {{ _('%(username)s said %(when)s...',
                     username=user_link, when=moment(post.timestamp).fromNow()) }}
         <br/>
-        <p>
-            {{ post.body }}
+        <p id="{{ post.id }}">
+            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
         </p>
         <br/>
         {% if post.has_parent() %}
             <a href="{{ url_for('main.parent_posts', post_id=post.id) }}">Parent Posts</a>
-            <a href="{{ url_for('main.sibling_posts', post_id=post.id) }}">Sibling Posts</a>
+            {% if title|lower != 'sibling posts' %}
+                <a href="{{ url_for('main.sibling_posts', post_id=post.id) }}">Sibling Posts</a>
+            {% endif %}
         {% endif %}
-        {% if post.has_children() %}
+        {% if not hide_child_posts_link and post.has_children() %}
             <a href="{{ url_for('main.post', post_id=post.id) }}">Child Posts</a>
         {% endif %}
     </td>
