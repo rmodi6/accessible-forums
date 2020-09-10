@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 {% block app_content %}
-    <h1>Hi, welcome to accessibility blog</h1>
-    <div class="row">
-        Please click on the search field to search for a forum.
-        You will see relevant posts for each thread.
-        You can go to a particular post by clicking on it and can go back to the Parent post by clicking
-        back to parent posts.
-        Thank you!
-        Happy to assist you.
-    </div>
+    <h1>Welcome to the Accessibility Blog</h1>
+    <p>
+        Use the following <a href="https://www.nvaccess.org/">NVDA screen reader</a>
+        keyboard shortcuts to navigate through the website:
+    </p>
+    <ul>
+        <li>
+            <span class="keycap">F</span> to navigate to the search field form
+        </li>
+        <li>
+            <span class="keycap">H</span> to navigate the headings on the page.
+        </li>
+        <li>
+            <span class="keycap">K</span> to navigate the links on a page. Thread view has links to thread on the page
+            while posts view has links to go back to thread and open parent, sibling and child posts.
+        </li>
+        <li>
+            <span class="keycap">T</span> to navigate tables. All the posts are in a table layout for easy navigation.
+            Use <span class="keycap">Ctrl</span>+<span class="keycap">Alt</span>+
+            <span class="keycap">↑</span>/<span class="keycap">↓</span> to navigate between posts.
+        </li>
+    </ul>
 {% endblock %}
