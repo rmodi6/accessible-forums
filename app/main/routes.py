@@ -124,6 +124,13 @@ def thread(thread_id):
     return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
 
 
+@bp.route('/tree/<thread_id>')
+@login_required
+def tree_view(thread_id):
+    _thread = Thread.query.filter_by(id=thread_id).first()
+    return render_template('tree_view.html', thread=_thread)
+
+
 @bp.route('/post/<post_id>')
 @login_required
 def post(post_id):

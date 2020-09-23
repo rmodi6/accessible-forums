@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h3 id="tree1">
+        {{ thread.title }}
+    </h3>
+    {% if thread.posts[0] %}
+        <ul role="tree" aria-labelledby="tree1">
+            {% for post in [thread.posts[0]] recursive %}
+                {% set children = post.get_children() %}
+                {% if children[0] %}
+                    <li role="treeitem"
+                        aria-expanded="false">
+                        <span>
+                            {{ '%s said...' | format(post.author.username) }}
+                            <p id="{{ post.id }}">
+                                {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
+                            </p>
+                        </span>
+                        <ul role="group">
+                            {{ loop(children) }}
+                        </ul>
+                    </li>
+                {% else %}
+                    <li role="none">
+                        <span>
+                            {{ '%s said...' | format(post.author.username) }}
+                            <p id="{{ post.id }}">
+                                {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
+                            </p>
+                        </span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>
+            This thread does not have any posts.
+        </p>
+    {% endif %}
+{% endblock %}
