@@ -10,6 +10,7 @@
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-accessibility.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/treeLinks.css') }}">
 {% endblock %}
 
 {% block navbar %}
@@ -66,4 +67,6 @@
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
     <script src="{{ url_for("static", filename="js/bootstrap-accessibility.min.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/treeLinks.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/treeitemLinks.js") }}"></script>
 {% endblock %}
