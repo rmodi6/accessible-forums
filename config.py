@@ -12,6 +12,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL') or 'http://localhost:9200'
     BASE_DIR = basedir
-    INIT_DB = os.environ.get('INIT_DB') or False
+    INIT_DB = os.environ.get('INIT_DB', 'false').lower() == 'true'
     LANGUAGES = ['en', 'es']
     POSTS_PER_PAGE = 1000
