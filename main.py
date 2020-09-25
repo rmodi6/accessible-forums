@@ -1,6 +1,7 @@
 import glob
 import os
 
+import click
 from tqdm import tqdm
 
 from app import create_app, db, cli
@@ -10,14 +11,16 @@ from app.models import User, Post
 app = create_app()
 cli.register(app)
 
-with app.app_context():
-    if app.config['INIT_DB']:
-        print('Loading data into database...')
-        path = os.path.join(app.config['BASE_DIR'], "data/**/*.csv")
-        for file_name in tqdm(glob.glob(path)):
-            load_users_and_posts(file_name)
-            load_threads(file_name)
-        print('Data loaded successfully')
+
+@app.cli.command("db-load")
+def load_db():
+    """Load existing data into database."""
+    click.echo('Loading data into database...')
+    path = os.path.join(app.config['BASE_DIR'], "data/**/*.csv")
+    for file_name in tqdm(glob.glob(path)):
+        load_users_and_posts(file_name)
+        load_threads(file_name)
+    click.echo('Data loaded successfully')
 
 
 @app.shell_context_processor
