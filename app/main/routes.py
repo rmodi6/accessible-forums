@@ -1,7 +1,7 @@
 import ast
 from datetime import datetime
 
-from flask import render_template, flash, redirect, url_for, request, g
+from flask import render_template, flash, redirect, url_for, request, g, current_app
 from flask_babel import _, get_locale
 from flask_login import current_user, login_required
 
@@ -113,7 +113,12 @@ def unfollow(username):
 def search():
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
-    threads, total = Thread.search(g.search_form.q.data)
+    if current_app.elasticsearch and current_app.elasticsearch.ping():
+        # If elasticsearch is running use elasticsearch query with fuzzy match
+        threads, total = Thread.search(g.search_form.q.data)
+    else:
+        # Else use db query with exact match
+        threads = Thread.query.filter(Thread.title.like("%{}%".format(g.search_form.q.data))).all()
     return render_template('search.html', threads=threads)
 
 
