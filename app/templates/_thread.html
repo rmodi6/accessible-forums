@@ -1,7 +1,5 @@
-<tr>
-    <td>
-        <a href="{{ url_for('main.thread', thread_id=thread.id) }}">
-            {{ thread.title }}
-        </a>
-    </td>
-</tr>
+<li role="none">
+    <a role="treeitem" href="{{ url_for('main.tree_view', thread_id=thread.id) }}">
+        {{ thread.title if thread.title.rstrip().endswith(('.', '!', '?')) else thread.title + '.' }}
+    </a>
+</li>

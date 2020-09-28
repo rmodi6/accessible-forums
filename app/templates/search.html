@@ -2,16 +2,10 @@
 
 {% block app_content %}
     {% if threads[0] %}
-    <h1 id="tree1" autofocus>{{ _('Forum threads that match your search') }}</h1>
+        <h1 id="tree1" autofocus>{{ _('Forum threads that match your search') }}</h1>
         <ul role="tree">
             {% for thread in threads %}
-                <li role="treeitem"
-                    aria-expanded="false">
-                    <span>
-                        {{ thread.title if thread.title.rstrip().endswith(('.', '!', '?')) else thread.title + '.' }}
-                    </span>
-                    {% include '_tree_view.html' %}
-                </li>
+                {% include "_thread.html" %}
             {% endfor %}
         </ul>
     {% else %}
