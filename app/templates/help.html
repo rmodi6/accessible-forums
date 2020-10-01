@@ -2,24 +2,105 @@
 {% block app_content %}
     <h1>Welcome to the Accessibility Blog</h1>
     <p>
-        Use the following <a href="https://www.nvaccess.org/">NVDA screen reader</a>
-        keyboard shortcuts to navigate through the website:
+        This blog uses the
+        <a href="https://www.w3.org/TR/wai-aria-practices-1.1/examples/treeview/treeview-2/treeview-2a.html">
+            Treeview design pattern
+        </a> for easy navigation using keyboard shortcuts only.
     </p>
-    <ul>
-        <li>
-            <span class="keycap">F</span> to navigate to the search field form
-        </li>
-        <li>
-            <span class="keycap">H</span> to navigate the headings on the page.
-        </li>
-        <li>
-            <span class="keycap">K</span> to navigate the links on a page. Thread view has links to thread on the page
-            while posts view has links to go back to thread and open parent, sibling and child posts.
-        </li>
-        <li>
-            <span class="keycap">T</span> to navigate tables. All the posts are in a table layout for easy navigation.
-            Use <span class="keycap">Ctrl</span>+<span class="keycap">Alt</span>+
-            <span class="keycap">↑</span>/<span class="keycap">↓</span> to navigate between posts.
-        </li>
-    </ul>
+    <table class="table table-hover table-striped">
+        <caption>Keyboard Support</caption>
+        <thead>
+        <tr>
+            <th scope="col">
+                Key
+            </th>
+            <th scope="col">
+                Function
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr data-test-id="key-down-arrow">
+            <th><span class="keycap">↓</span></th>
+            <td>
+                <ul>
+                    <li>Moves focus to the next node that is focusable without opening or closing a node.</li>
+                    <li>If focus is on the last node, does nothing.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-up-arrow">
+            <th><span class="keycap">↑</span></th>
+            <td>
+                <ul>
+                    <li>Moves focus to the previous node that is focusable without opening or closing a node.</li>
+                    <li>If focus is on the first node, does nothing.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-right-arrow">
+            <th><span class="keycap">→</span></th>
+            <td>
+                <ul>
+                    <li>When focus is on a closed node, opens the node; focus does not move.</li>
+                    <li>When focus is on a open node, moves focus to the first child node.</li>
+                    <li>When focus is on an end node, does nothing.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-left-arrow">
+            <th><span class="keycap">←</span></th>
+            <td>
+                <ul>
+                    <li>When focus is on an open node, closes the node.</li>
+                    <li>When focus is on a child node that is also either an end node or a closed node, moves focus to
+                        its parent node.
+                    </li>
+                    <li>When focus is on a root node that is also either an end node or a closed node, does nothing.
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-home">
+            <th><span class="keycap">Home</span></th>
+            <td>
+                <ul>
+                    <li>Moves focus to first node without opening or closing a node.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-end">
+            <th><span class="keycap">End</span></th>
+            <td>
+                <ul>
+                    <li>Moves focus to the last node that can be focused without expanding any nodes that are closed.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-character">
+            <th><span class="keycap">a-z, A-Z</span></th>
+            <td>
+                <ul>
+                    <li>Focus moves to the next node with a name that starts with the typed character.</li>
+                    <li>Search wraps to first node if a matching name is not found among the nodes that follow the
+                        focused node.
+                    </li>
+                    <li>Search ignores nodes that are descendants of closed nodes.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr data-test-id="key-asterisk">
+            <th>
+                <span class="keycap">*</span> (asterisk)
+            </th>
+            <td>
+                <ul>
+                    <li>Expands all closed sibling nodes that are at the same level as the focused node.</li>
+                    <li>Focus does not move.</li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 {% endblock %}
