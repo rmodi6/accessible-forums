@@ -222,9 +222,10 @@ TreeitemLink.prototype.handleKeydown = function (event) {
   if (flag) {
     event.stopPropagation();
     event.preventDefault();
-    char = char === ' ' ? 'Space' : char;
-    keylog = char + ' in [' + window.location.href + ']';
-    $.ajax({url: '/keylogger?keylog=' + keylog});
+    var nodeId = $(tgt).attr("id") ? $(tgt).attr("id") : $(tgt).find("[id]").first().attr("id");
+    char = char === " " ? "Space": char;
+    keylog = char + " on [#" + nodeId + "] in [" + window.location.href + "]";
+    $.ajax({url: '/logger?msg=' + encodeURIComponent(keylog)});
   }
 };
 
@@ -251,6 +252,9 @@ TreeitemLink.prototype.handleFocus = function (event) {
   if (this.isExpandable) {
     node = node.firstElementChild;
   }
+  var nodeId = $(node).attr("id") ? $(node).attr("id") : $(node).find("[id]").first().attr("id");
+  var msg = "blur on [#" + nodeId + "] in [" + window.location.href + "]"
+  $.ajax({url: '/logger?msg=' + encodeURIComponent(msg)});
   node.classList.add('focus');
 };
 
@@ -259,6 +263,9 @@ TreeitemLink.prototype.handleBlur = function (event) {
   if (this.isExpandable) {
     node = node.firstElementChild;
   }
+  var nodeId = $(node).attr("id") ? $(node).attr("id") : $(node).find("[id]").first().attr("id");
+  var msg = "blur on [#" + nodeId + "] in [" + window.location.href + "]"
+  $.ajax({url: '/logger?msg=' + encodeURIComponent(msg)});
   node.classList.remove('focus');
 };
 

