@@ -1,5 +1,5 @@
 <li role="none">
-    <a id="{{ thread.id }}" role="treeitem" href="{{ url_for('main.tree_view', thread_id=thread.id) }}">
+    <a id="{{ thread.id }}" role="treeitem" href="{{ url_for('main.linear_view', thread_id=thread.id) }}">
         {{ thread.title if thread.title.rstrip().endswith(('.', '!', '?')) else thread.title + '.' }}
     </a>
 </li>
