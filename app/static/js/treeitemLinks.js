@@ -253,7 +253,7 @@ TreeitemLink.prototype.handleFocus = function (event) {
     node = node.firstElementChild;
   }
   var nodeId = $(node).attr("id") ? $(node).attr("id") : $(node).find("[id]").first().attr("id");
-  var msg = "blur on [#" + nodeId + "] in [" + window.location.href + "]"
+  var msg = "focus on [#" + nodeId + "] in [" + window.location.href + "]"
   $.ajax({url: '/logger?msg=' + encodeURIComponent(msg)});
   node.classList.add('focus');
 };
