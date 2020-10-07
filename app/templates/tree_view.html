@@ -11,11 +11,10 @@
                 {% if children[0] %}
                     <li role="treeitem"
                         aria-expanded="false">
-                        <span>
+                        <span id="{{ post.id }}">
                             {{ '%s said...' | format(post.author.username) }}
-                            <p id="{{ post.id }}">
-                                {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
-                            </p>
+                            <br/>
+                            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
                         </span>
                         <ul role="group">
                             {{ loop(children) }}
@@ -23,11 +22,10 @@
                     </li>
                 {% else %}
                     <li role="treeitem">
-                        <span>
+                        <span id="{{ post.id }}">
                             {{ '%s said...' | format(post.author.username) }}
-                            <p id="{{ post.id }}">
-                                {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
-                            </p>
+                            <br/>
+                            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
                         </span>
                     </li>
                 {% endif %}
