@@ -26,20 +26,27 @@
                 </button>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                {% if g.search_form %}
-                    <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
-                        <div class="form-group">
-                            {% if request.url_rule.endpoint == "main.index" %}
-                                {{ g.search_form.q(size=150, class='form-control', placeholder=g.search_form.q.label.text, autofocus='true') }}
-                            {% else %}
-                                {{ g.search_form.q(size=150, class='form-control', placeholder=g.search_form.q.label.text) }}
-                            {% endif %}
-                        </div>
-                    </form>
-                {% endif %}
+
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ url_for('main.help') }}">{{ _('Help') }}</a></li>
                 </ul>
+
+                {% if g.search_form %}
+                    <form class="navbar-form" method="get" action="{{ url_for('main.search') }}">
+                        <div class="form-group" style="display:inline;">
+                            <div class="input-group" style="display:table;">
+                                <span class="input-group-addon" style="width:1%;" aria-hidden="true">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </span>
+                                {% if request.url_rule.endpoint == "main.index" %}
+                                    {{ g.search_form.q(class='form-control', placeholder=g.search_form.q.label.text, autofocus='true') }}
+                                {% else %}
+                                    {{ g.search_form.q(class='form-control', placeholder=g.search_form.q.label.text) }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </nav>
