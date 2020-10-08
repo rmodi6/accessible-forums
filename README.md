@@ -28,7 +28,8 @@ cp -r /path/to/data/directory ./
  ┣ 📂data  
  ┃ ┣ 📂JAWS  
  ┃ ┃ ┗ 📜...csv files  
- ┃ ┗ 📂NVDA   ┃ ┃ ┗ 📜...csv files  
+ ┃ ┗ 📂NVDA  
+ ┃ ┃ ┗ 📜...csv files  
  ┣ 📂migrations  
  ┣ 📜.env  
  ┣ 📜.gitignore  
