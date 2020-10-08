@@ -28,8 +28,7 @@ cp -r /path/to/data/directory ./
  ┣ 📂data  
  ┃ ┣ 📂JAWS  
  ┃ ┃ ┗ 📜...csv files  
- ┃ ┗ 📂NVDA  
- ┃ ┃ ┗ 📜...csv files  
+ ┃ ┗ 📂NVDA   ┃ ┃ ┗ 📜...csv files  
  ┣ 📂migrations  
  ┣ 📜.env  
  ┣ 📜.gitignore  
@@ -48,6 +47,10 @@ flask db-load
 ```
 - Run the app using
 ```bash
-flask run
+flask run -h 0.0.0.0
 ```
-By default, the app will be running on http://127.0.0.1:5000/
+By default, the app will be running on http://127.0.0.1:5000/.
+On a local network (WiFi), you can access the website through any device on the same network (WiFi) using the local 
+ip address of the machine. E.g. If your machine has the local ip address 192.168.0.2, you can access the website using 
+http://192.168.0.2:5000/. Use the `ifconfig` command on UNIX machines and `ipconfig` command on Windows machines to get 
+the local ip address of the device.
