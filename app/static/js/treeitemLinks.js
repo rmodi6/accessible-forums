@@ -222,10 +222,6 @@ TreeitemLink.prototype.handleKeydown = function (event) {
   if (flag) {
     event.stopPropagation();
     event.preventDefault();
-    var nodeId = $(tgt).attr("id") ? $(tgt).attr("id") : $(tgt).find("[id]").first().attr("id");
-    char = char === " " ? "Space": char;
-    keylog = char + " on [#" + nodeId + "] in [" + window.location.href + "]";
-    $.ajax({url: '/logger?msg=' + encodeURIComponent(keylog)});
   }
 };
 
