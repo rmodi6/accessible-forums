@@ -8,6 +8,7 @@ from app.models import User
 
 class LoginForm(FlaskForm):
     username = StringField(_l('Full Name'), validators=[DataRequired()])
+    reuse_username = BooleanField(_l('Reuse Username?'))
     submit = SubmitField(_l('Sign In'))
 
 

@@ -17,15 +17,20 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None:
-            # If username already exists in database prompt to use a different name
-            flash(_('Please use a different name.'))
-            return redirect(url_for('auth.login'))
-        # Store the new username in database and login the user
-        user = User(username=form.username.data, id=form.username.data)
-        user.set_password('password')
-        db.session.add(user)
-        db.session.commit()
-        login_user(user, remember=True)
+            if form.reuse_username.data:
+                # If reuse username is checked, login the existing user
+                login_user(user, remember=True)
+            else:
+                # Else prompt to use a different name or check the reuse username box
+                flash(_('Please use a different name or check the reuse username box.'))
+                return redirect(url_for('auth.login'))
+        else:
+            # Store the new username in database and login the user
+            user = User(username=form.username.data, id=form.username.data)
+            user.set_password('password')
+            db.session.add(user)
+            db.session.commit()
+            login_user(user, remember=True)
 
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
