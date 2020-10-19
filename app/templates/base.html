@@ -31,10 +31,10 @@
                     {% if current_user.is_anonymous %}
                         <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
-                        <li><a aria-details="Your username">{{ _(current_user.username) }}</a></li>
+                        <li><a id="username" aria-details="Your username">{{ current_user.username }}</a></li>
                         <li><a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>
                     {% endif %}
-                        <li><a href="{{ url_for('main.help') }}">{{ _('Help') }}</a></li>
+                    <li><a href="{{ url_for('main.help') }}">{{ _('Help') }}</a></li>
                 </ul>
 
                 {% if g.search_form %}
@@ -77,6 +77,9 @@
     {{ super() }}
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
+    <script type="text/javascript">
+        var username = $("#username").text();
+    </script>
     <script src="{{ url_for("static", filename="js/bootstrap-accessibility.min.js") }}"></script>
     <script src="{{ url_for("static", filename="js/treeLinks.js") }}"></script>
     <script src="{{ url_for("static", filename="js/treeitemLinks.js") }}"></script>
