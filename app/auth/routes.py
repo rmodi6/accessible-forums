@@ -13,28 +13,20 @@ from app.models import User
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    if not current_user.is_authenticated:
-        # Create a default admin user if it does not exist
-        admin_user = User.query.filter_by(username='admin').first()
-        if admin_user is None:
-            admin_user = User(username='admin', email='admin@example.com', id='admin')
-            admin_user.set_password('admin')
-            db.session.add(admin_user)
-            db.session.commit()
-        # Login the admin user
-        admin_user = User.query.filter_by(username='admin').first()
-        login_user(admin_user, remember=True)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
-        return redirect(next_page)
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'))
+        if user is not None:
+            # If username already exists in database prompt to use a different name
+            flash(_('Please use a different name.'))
             return redirect(url_for('auth.login'))
-        login_user(user, remember=form.remember_me.data)
+        # Store the new username in database and login the user
+        user = User(username=form.username.data, id=form.username.data)
+        user.set_password('password')
+        db.session.add(user)
+        db.session.commit()
+        login_user(user, remember=True)
+
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
