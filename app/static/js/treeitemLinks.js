@@ -249,7 +249,7 @@ TreeitemLink.prototype.handleFocus = function (event) {
     node = node.firstElementChild;
   }
   var nodeId = $(node).attr("id") ? $(node).attr("id") : $(node).find("[id]").first().attr("id");
-  var msg = "focus on [#" + nodeId + "] in [" + window.location.href + "]"
+  var msg = "@#@ user: " + username + " @#@ focus_on: " + nodeId + " @#@ url: " + window.location.href;
   $.ajax({url: '/logger?msg=' + encodeURIComponent(msg)});
   node.classList.add('focus');
 };
@@ -260,7 +260,7 @@ TreeitemLink.prototype.handleBlur = function (event) {
     node = node.firstElementChild;
   }
   var nodeId = $(node).attr("id") ? $(node).attr("id") : $(node).find("[id]").first().attr("id");
-  var msg = "blur on [#" + nodeId + "] in [" + window.location.href + "]"
+  var msg = "@#@ user: " + username + " @#@ blur_on: " + nodeId + " @#@ url: " + window.location.href;
   $.ajax({url: '/logger?msg=' + encodeURIComponent(msg)});
   node.classList.remove('focus');
 };
