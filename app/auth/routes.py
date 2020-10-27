@@ -1,3 +1,5 @@
+import time
+
 from flask import render_template, redirect, url_for, flash, request
 from flask_babel import _
 from flask_login import login_user, logout_user, current_user
@@ -15,28 +17,18 @@ def login():
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is not None:
-            if form.reuse_username.data:
-                # If reuse username is checked, login the existing user
-                login_user(user, remember=True)
-            else:
-                # Else prompt to use a different name or check the reuse username box
-                flash(_('Please use a different name or check the reuse username box.'))
-                return redirect(url_for('auth.login'))
-        else:
-            # Store the new username in database and login the user
-            user = User(username=form.username.data, id=form.username.data)
-            user.set_password('password')
-            db.session.add(user)
-            db.session.commit()
-            login_user(user, remember=True)
+        username = form.username.data + "_" + str(time.time()).split(".")[0]
+        user = User(username=username, id=username)
+        user.set_password('password')
+        db.session.add(user)
+        db.session.commit()
+        login_user(user, remember=True)
 
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
         return redirect(next_page)
-    return render_template('auth/login.html', title=_('Sign In'), form=form)
+    return render_template('auth/login.html', title=_('Enter your name'), form=form)
 
 
 @bp.route('/logout')
