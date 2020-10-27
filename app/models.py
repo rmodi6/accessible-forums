@@ -115,6 +115,7 @@ class Post(SearchableMixin, db.Model):
     __searchable__ = ['parent_ids', 'thread_id']
     id = db.Column(db.String, primary_key=True)
     body = db.Column(db.String(140))
+    label = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
