@@ -6,27 +6,19 @@
     </h3>
     {% if thread.posts[0] %}
         <ul role="tree" aria-labelledby="tree1">
-            {% for post in [thread.posts[0]] recursive %}
+            {% for post in thread.get_question_posts() recursive %}
                 {% set children = post.get_children() %}
                 {% if children[0] %}
                     <li role="treeitem"
                         aria-expanded="false">
-                        <span id="{{ post.id }}">
-                            {{ '%s said...' | format(post.author.username) }}
-                            <br/>
-                            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
-                        </span>
+                        {% include "_post.html" %}
                         <ul role="group">
                             {{ loop(children) }}
                         </ul>
                     </li>
                 {% else %}
                     <li role="treeitem">
-                        <span id="{{ post.id }}">
-                            {{ '%s said...' | format(post.author.username) }}
-                            <br/>
-                            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
-                        </span>
+                        {% include "_post.html" %}
                     </li>
                 {% endif %}
             {% endfor %}
