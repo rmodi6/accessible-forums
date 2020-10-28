@@ -4,9 +4,11 @@ from hashlib import md5
 from typing import List
 
 from flask_login import UserMixin
+from sqlalchemy import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login
+from app.enums import Label
 from app.search import add_to_index, remove_from_index, query_index
 
 
@@ -116,7 +118,7 @@ class Post(SearchableMixin, db.Model):
     __searchable__ = ['parent_ids', 'thread_id']
     id = db.Column(db.String, primary_key=True)
     body = db.Column(db.String(140))
-    label = db.Column(db.String(140))
+    label = db.Column(Enum(Label))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
@@ -142,7 +144,10 @@ class Post(SearchableMixin, db.Model):
         return list(siblings)
 
     def is_question_post(self):
-        return self.label in {'access', 'use'}
+        return self.label in Label.question_types()
+
+    def get_verb(self):
+        return 'asked' if self.is_question_post() else 'said'
 
 
 class Thread(SearchableMixin, db.Model):

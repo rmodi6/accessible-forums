@@ -1,7 +1,6 @@
 <span id="{{ post.id }}">
-    {% set verb = 'asked' if post.label in ['access', 'use', 'clarification'] else 'said' %}
-    <label>{{ post.label }}:</label>
-    {{ '%s %s...' | format(post.author.username, verb) }}
+    <label>{{ post.label.value or 'None' }}:</label>
+    {{ '%s %s...' | format(post.author.username, post.get_verb()) }}
     <br/>
     {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
 </span>
