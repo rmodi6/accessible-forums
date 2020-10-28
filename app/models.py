@@ -1,6 +1,7 @@
 import ast
 from datetime import datetime
 from hashlib import md5
+from typing import List
 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -140,12 +141,21 @@ class Post(SearchableMixin, db.Model):
             siblings.update(Post.query.filter(Post.parent_ids.like("%'{}'%".format(parent_id))).all())
         return list(siblings)
 
+    def is_question_post(self):
+        return self.label in {'access', 'use'}
+
 
 class Thread(SearchableMixin, db.Model):
     __searchable__ = ['title']
     id = db.Column(db.String, primary_key=True)
     title = db.Column(db.String(140))
-    posts = db.relationship('Post', backref='thread', lazy='dynamic')
+    posts: List[Post] = db.relationship('Post', backref='thread', lazy='dynamic')
 
     def __repr__(self):
         return '<Thread {}>'.format(self.title)
+
+    def get_question_posts(self):
+        question_posts = [post for post in self.posts if post.is_question_post()]
+        if len(question_posts) == 0:
+            question_posts.append(self.posts[0])
+        return question_posts
