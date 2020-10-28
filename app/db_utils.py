@@ -19,7 +19,7 @@ def load_users_and_posts(file_name):
                     existing_post = Post.query.filter_by(id=row[5]).first()
                     if existing_post is None:
                         post = Post(body=row[3], author=User.query.filter_by(username=row[2]).first(), id=row[5],
-                                    thread_id=row[7], parent_ids=str(row[10]))
+                                    thread_id=row[7], parent_ids=str([row[6]]), label=row[10])
                         db.session.add(post)
                         db.session.commit()
             except Exception as e:
