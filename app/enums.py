@@ -9,7 +9,7 @@ class Label(Enum):
     confirm = "Confirm"
     negate = "Negate"
     elaborate = "Elaborate"
-    thank = "Thank you"
+    thanks = "Thank you"
     misc = "Miscellaneous"
 
     @staticmethod
