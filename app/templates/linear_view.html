@@ -8,12 +8,7 @@
         <ul role="tree" aria-labelledby="tree1">
             {% for post in thread.posts %}
                 <li role="treeitem">
-                    <span>
-                        {{ '%s said...' | format(post.author.username) }}
-                        <p id="{{ post.id }}">
-                            {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
-                        </p>
-                    </span>
+                    {% include "_post.html" %}
                 </li>
             {% endfor %}
         </ul>
