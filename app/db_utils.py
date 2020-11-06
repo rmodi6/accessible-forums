@@ -1,7 +1,10 @@
 import csv
+import sys
 
 from app import db
 from app.models import User, Post, Thread
+
+csv.field_size_limit(sys.maxsize)
 
 
 def load_users_and_posts(file_name):
