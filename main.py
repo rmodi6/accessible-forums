@@ -1,11 +1,10 @@
-import glob
 import os
 
 import click
 from tqdm import tqdm
 
 from app import create_app, db, cli
-from app.db_utils import load_users_and_posts, load_threads
+from app.db_utils import load_data_from_file
 from app.models import User, Post
 
 app = create_app()
@@ -24,8 +23,7 @@ def load_db():
             if file_name.endswith(".csv"):
                 file_names.append(file_name)
     for file_name in tqdm(file_names):
-        load_users_and_posts(file_name)
-        load_threads(file_name)
+        load_data_from_file(file_name)
     click.echo('Data loaded successfully')
 
 

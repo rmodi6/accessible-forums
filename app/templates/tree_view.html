@@ -2,20 +2,18 @@
 
 {% block app_content %}
     <h3 id="tree1">
-        {{ thread.title }}
+        {{ root.val.thread.title }}
     </h3>
-    {% if thread.posts[0] %}
+    {% if root.val %}
         <ul role="tree" aria-labelledby="tree1">
-            {% set level = namespace(value=1) %}
-            {% for post in [thread.posts[0]] recursive %}
-                {% set children = post.get_children(level.value) %}
-                {% set level.value = level.value + 1 %}
-                {% if children[0] %}
+            {% for node in [root] recursive %}
+                {% set post = node.val %}
+                {% if node.children|length > 0 %}
                     <li role="treeitem"
                         aria-expanded="false">
                         {% include "_post.html" %}
                         <ul role="group">
-                            {{ loop(children) }}
+                            {{ loop(node.children) }}
                         </ul>
                     </li>
                 {% else %}

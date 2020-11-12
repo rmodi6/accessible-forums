@@ -1,4 +1,3 @@
-import ast
 import json
 from datetime import datetime
 
@@ -126,11 +125,11 @@ def search():
         return redirect(url_for('main.explore'))
     if current_app.elasticsearch and current_app.elasticsearch.ping():
         # If elasticsearch is running use elasticsearch query with fuzzy match
-        threads, total = Thread.search(g.search_form.q.data)
+        posts, total = Post.search(g.search_form.q.data)
     else:
         # Else use db query with exact match
-        threads = Thread.query.filter(Thread.title.like("%{}%".format(g.search_form.q.data))).all()
-    return render_template('search.html', threads=threads)
+        posts = Post.query.filter(Post.body.like("%{}%".format(g.search_form.q.data))).all()
+    return render_template('search.html', threads=None, posts=posts)
 
 
 @bp.route('/thread/<thread_id>')
@@ -140,11 +139,11 @@ def thread(thread_id):
     return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
 
 
-@bp.route('/tree/<thread_id>')
+@bp.route('/tree/<post_id>')
 @login_required
-def tree_view(thread_id):
-    _thread = Thread.query.filter_by(id=thread_id).first()
-    return render_template('tree_view.html', thread=_thread)
+def tree_view(post_id):
+    root = Post.query.filter_by(id=post_id).first().get_tree()
+    return render_template('tree_view.html', root=root, search_post_id=post_id)
 
 
 @bp.route('/linear/<thread_id>')
@@ -165,9 +164,8 @@ def post(post_id):
 @bp.route('/post/parents/<post_id>')
 @login_required
 def parent_posts(post_id):
-    parent_ids = Post.query.filter_by(id=post_id).first().parent_ids
-    parent_ids = ast.literal_eval(parent_ids)
-    _parent_posts = Post.query.filter(Post.id.in_(parent_ids)).all()
+    parent_id = Post.query.filter_by(id=post_id).first().parent_ids
+    _parent_posts = Post.query.filter_by(id=parent_id).all()
     return render_template('thread.html', title=_('Parent Posts'), posts=_parent_posts)
 
 

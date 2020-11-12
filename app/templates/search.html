@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    {% if threads[0] %}
-        <h1 id="tree1" autofocus>{{ _('Forum threads that match your search') }}</h1>
+    {% if posts[0] %}
+        <h1 id="tree1" autofocus>{{ _('Forum posts that match your search') }}</h1>
         <ul role="tree">
-            {% for thread in threads %}
-                {% include "_thread.html" %}
+            {% for post in posts %}
+                {% include "_search_post.html" %}
             {% endfor %}
         </ul>
     {% else %}
-        <h1 autofocus>{{ _('No threads match your search term. Try searching something else.') }}</h1>
+        <h1 autofocus>{{ _('No posts match your search term. Try searching something else.') }}</h1>
     {% endif %}
 {% endblock %}
