@@ -1,4 +1,3 @@
-import ast
 from datetime import datetime
 from hashlib import md5
 from typing import List
@@ -122,37 +121,37 @@ class Post(SearchableMixin, db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.String, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
-    parent_ids = db.Column(db.String(140))
+    parent_ids = db.Column(db.String(140), index=True)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
     def has_parent(self):
-        return len(self.parent_ids) > 2
+        return '-1' not in self.parent_ids
 
-    def has_children(self, level):
+    def get_parent(self):
+        return Post.query.filter(Post.id == self.parent_ids).first() if self.has_parent() else None
+
+    def has_children(self, level=-1):
         return len(self.get_children(level)) > 0
 
-    def get_children(self, level):
+    def get_children(self, level=-1):
         if level == 1:
             # if this is the first post in the thread, include orphan posts in children
             return Post.query.filter(
-                (Post.parent_ids.like("%'{}'%".format(self.id))) |
+                (Post.parent_ids == self.id) |
                 (
                         (Post.id != self.id) &
                         (Post.thread_id == self.thread_id) &
-                        (Post.parent_ids.like("['%-1']"))
+                        (Post.parent_ids.like("%-1"))
                 )
             ).all()
         else:
             # else only include children posts
-            return Post.query.filter(Post.parent_ids.like("%'{}'%".format(self.id))).all()
+            return Post.query.filter_by(parent_ids=self.id).all()
 
     def get_siblings(self):
-        parent_ids = ast.literal_eval(self.parent_ids)
-        siblings = set()
-        for parent_id in parent_ids:
-            siblings.update(Post.query.filter(Post.parent_ids.like("%'{}'%".format(parent_id))).all())
+        siblings = Post.query.filter_by(parent_ids=self.parent_ids).all()
         return list(siblings)
 
     def is_question_post(self):
@@ -160,6 +159,30 @@ class Post(SearchableMixin, db.Model):
 
     def get_verb(self):
         return 'asked' if self.is_question_post() else 'said'
+
+    def display_body(self, maxlen=None):
+        if maxlen and len(self.body) > maxlen:
+            return self.body[:maxlen] + '...'
+        return self.body if self.body.rstrip().endswith(('.', '!', '?')) else self.body + '.'
+
+    def get_tree(self):
+        node = TreeNode(val=self)
+        for child in self.get_children():
+            child_node = child.get_subtree()
+            node.children.append(child_node)
+        parent = self.get_parent()
+        while parent:
+            parent_node = TreeNode(val=parent, children=[node])
+            node = parent_node
+            parent = node.val.get_parent()
+        return node
+
+    def get_subtree(self):
+        node = TreeNode(val=self)
+        for child in self.get_children():
+            child_node = child.get_subtree()
+            node.children.append(child_node)
+        return node
 
 
 class Thread(SearchableMixin, db.Model):
@@ -176,3 +199,15 @@ class Thread(SearchableMixin, db.Model):
         if len(question_posts) == 0:
             question_posts.append(self.posts[0])
         return question_posts
+
+
+class TreeNode:
+    """
+        Helper class to generate a tree node
+    """
+
+    def __init__(self, val=None, children=None):
+        if children is None:
+            children = []
+        self.val = val
+        self.children = children

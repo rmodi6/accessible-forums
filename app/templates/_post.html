@@ -1,4 +1,8 @@
 <span id="{{ post.id }}">
-    {{ '%s : ' | format(post.author.username) }}
-    {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
+    {% set post_body = '%s : %s' | format(post.author.username, post.display_body()) %}
+    {% if post.id == search_post_id %}
+        <mark>{{ post_body }}</mark>
+    {% else %}
+        {{ post_body }}
+    {% endif %}
 </span>
