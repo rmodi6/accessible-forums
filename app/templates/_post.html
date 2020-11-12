@@ -1,6 +1,4 @@
 <span id="{{ post.id }}">
-    <label>{{ post.label.value or 'None' }}:</label>
-    {{ '%s %s...' | format(post.author.username, post.get_verb()) }}
-    <br/>
+    {{ '%s : ' | format(post.author.username) }}
     {{ post.body if post.body.rstrip().endswith(('.', '!', '?')) else post.body + '.' }}
 </span>
