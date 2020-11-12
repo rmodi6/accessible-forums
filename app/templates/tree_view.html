@@ -6,8 +6,10 @@
     </h3>
     {% if thread.posts[0] %}
         <ul role="tree" aria-labelledby="tree1">
-            {% for post in thread.get_question_posts() recursive %}
-                {% set children = post.get_children() %}
+            {% set level = namespace(value=1) %}
+            {% for post in [thread.posts[0]] recursive %}
+                {% set children = post.get_children(level.value) %}
+                {% set level.value = level.value + 1 %}
                 {% if children[0] %}
                     <li role="treeitem"
                         aria-expanded="false">
