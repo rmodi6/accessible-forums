@@ -130,11 +130,23 @@ class Post(SearchableMixin, db.Model):
     def has_parent(self):
         return len(self.parent_ids) > 2
 
-    def has_children(self):
-        return len(self.get_children()) > 0
+    def has_children(self, level):
+        return len(self.get_children(level)) > 0
 
-    def get_children(self):
-        return Post.query.filter(Post.parent_ids.like("%'{}'%".format(self.id))).all()
+    def get_children(self, level):
+        if level == 1:
+            # if this is the first post in the thread, include orphan posts in children
+            return Post.query.filter(
+                (Post.parent_ids.like("%'{}'%".format(self.id))) |
+                (
+                        (Post.id != self.id) &
+                        (Post.thread_id == self.thread_id) &
+                        (Post.parent_ids.like("['%-1']"))
+                )
+            ).all()
+        else:
+            # else only include children posts
+            return Post.query.filter(Post.parent_ids.like("%'{}'%".format(self.id))).all()
 
     def get_siblings(self):
         parent_ids = ast.literal_eval(self.parent_ids)
