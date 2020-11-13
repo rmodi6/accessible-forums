@@ -1,6 +1,6 @@
 <li role="none">
     <a id="{{ post.id }}" role="treeitem"
-       href="{{ url_for('main.tree_view', post_id=post.id) }}"
+       href="{{ url_for('main.linear_view', thread_id=post.thread_id) }}"
        style="text-decoration: none; margin-bottom: 5px"
     >
         {{ post.display_body(180) }}
