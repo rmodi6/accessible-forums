@@ -1,8 +1,10 @@
 <span id="{{ post.id }}">
+    <label class="sr-only">{{ srpretext }}</label>
     {% set post_body = '%s : %s' | format(post.author.username, post.display_body()) %}
     {% if post.id == search_post_id %}
         <mark>{{ post_body }}</mark>
     {% else %}
         {{ post_body }}
     {% endif %}
+    <label class="sr-only">{{ srposttext }}</label>
 </span>

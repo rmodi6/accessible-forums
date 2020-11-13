@@ -6,18 +6,29 @@
     </h3>
     {% if root.val %}
         <ul role="tree" aria-labelledby="tree1">
+            {% set level = namespace(value=1) %}
             {% for node in [root] recursive %}
+                {% set srpretext = "Level %s - %s of %s." | format(level.value, loop.index, loop.length) %}
                 {% set post = node.val %}
                 {% if node.children|length > 0 %}
                     <li role="treeitem"
+                        aria-level="{{ level.value }}"
+                        aria-setsize="{{ loop.length }}"
+                        aria-posinset="{{ loop.index }}"
                         aria-expanded="false">
+                        {% set srposttext = "Use down arrow key to access %s %s." | format(node.children|length, 'children' if node.children|length > 1 else 'child') %}
                         {% include "_post.html" %}
                         <ul role="group">
+                            {% set level.value = level.value + 1 %}
                             {{ loop(node.children) }}
                         </ul>
                     </li>
                 {% else %}
-                    <li role="treeitem">
+                    {% set srposttext = "This post has no children. Use up arrow key to access parent post or home key to access first post." %}
+                    <li role="treeitem"
+                        aria-level="{{ level.value }}"
+                        aria-setsize="{{ loop.length }}"
+                        aria-posinset="{{ loop.index }}">
                         {% include "_post.html" %}
                     </li>
                 {% endif %}
