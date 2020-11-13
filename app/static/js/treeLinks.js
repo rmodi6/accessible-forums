@@ -125,6 +125,26 @@ TreeLinks.prototype.setFocusToNextItem = function (currentItem) {
 
 };
 
+TreeLinks.prototype.setFocusToNextSiblingItem = function (currentItem) {
+
+  var nextItem = false;
+
+  for (var i = (this.treeitems.length - 1); i >= 0; i--) {
+    var ti = this.treeitems[i];
+    if (ti === currentItem) {
+      break;
+    }
+    if (ti.isVisible) {
+      nextItem = ti;
+    }
+  }
+
+  if (nextItem && nextItem.groupTreeitem === currentItem.groupTreeitem) {
+    this.setFocusToItem(nextItem);
+  }
+
+};
+
 TreeLinks.prototype.setFocusToPreviousItem = function (currentItem) {
 
   var prevItem = false;
@@ -144,10 +164,30 @@ TreeLinks.prototype.setFocusToPreviousItem = function (currentItem) {
   }
 };
 
+TreeLinks.prototype.setFocusToPreviousSiblingItem = function (currentItem) {
+
+  var prevItem = false;
+
+  for (var i = 0; i < this.treeitems.length; i++) {
+    var ti = this.treeitems[i];
+    if (ti === currentItem) {
+      break;
+    }
+    if (ti.isVisible) {
+      prevItem = ti;
+    }
+  }
+
+  if (prevItem && prevItem.groupTreeitem === currentItem.groupTreeitem) {
+    this.setFocusToItem(prevItem);
+  }
+};
+
 TreeLinks.prototype.setFocusToParentItem = function (currentItem) {
 
   if (currentItem.groupTreeitem) {
     this.setFocusToItem(currentItem.groupTreeitem);
+    this.collapseTreeitem(currentItem.groupTreeitem);
   }
 };
 
