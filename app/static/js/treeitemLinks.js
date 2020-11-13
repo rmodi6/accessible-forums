@@ -167,38 +167,44 @@ TreeitemLink.prototype.handleKeydown = function (event) {
         break;
 
       case this.keyCode.UP:
-        this.tree.setFocusToPreviousItem(this);
-        flag = true;
-        break;
-
-      case this.keyCode.DOWN:
-        this.tree.setFocusToNextItem(this);
+        this.tree.setFocusToParentItem(this);
         flag = true;
         break;
 
       case this.keyCode.RIGHT:
         if (this.isExpandable) {
           if (this.isExpanded()) {
+            this.tree.collapseTreeitem(this);
+          }
+        }
+        if (this.inGroup) {
+          this.tree.setFocusToNextSiblingItem(this);
+        } else {
+          this.tree.setFocusToNextItem(this);
+        }
+        flag = true;
+        break;
+
+      case this.keyCode.DOWN:
+        if (this.isExpandable) {
+          if (this.isExpanded()) {
             this.tree.setFocusToNextItem(this);
           }
           else {
             this.tree.expandTreeitem(this);
+            this.tree.setFocusToNextItem(this);
           }
         }
         flag = true;
         break;
 
       case this.keyCode.LEFT:
-        if (this.isExpandable && this.isExpanded()) {
-          this.tree.collapseTreeitem(this);
-          flag = true;
+        if (this.inGroup) {
+          this.tree.setFocusToPreviousSiblingItem(this);
+        } else {
+          this.tree.setFocusToPreviousItem(this);
         }
-        else {
-          if (this.inGroup) {
-            this.tree.setFocusToParentItem(this);
-            flag = true;
-          }
-        }
+        flag = true;
         break;
 
       case this.keyCode.HOME:
