@@ -18,7 +18,8 @@ def load_data_from_file(file_name):
         for row in tqdm(csv.reader(f)):
             try:
                 if index > 0:
-                    thread, date_time, author, post, parent_posts, post_id, parent_id, thread_id, author_id, origin_id, label = row
+                    [thread, date_time, author, post, parent_posts, post_id, default_parent_id, thread_id, author_id,
+                     origin_id, label, parent_id] = row
                     if author not in user_ids:
                         user = User(id=author_id, username=author, email='abc@xyz.com')
                         user.set_password('abc123')
@@ -30,7 +31,7 @@ def load_data_from_file(file_name):
                         db.session.add(post)
                         post_ids.add(post_id)
                     if thread_id not in thread_ids:
-                        thread = Thread(id=row[7], title=row[0])
+                        thread = Thread(id=thread_id, title=thread)
                         db.session.add(thread)
                         thread_ids.add(thread_id)
 
