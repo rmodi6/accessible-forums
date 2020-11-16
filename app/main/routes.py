@@ -146,11 +146,11 @@ def tree_view(post_id):
     return render_template('tree_view.html', root=root, search_post_id=post_id)
 
 
-@bp.route('/linear/<thread_id>')
+@bp.route('/linear/<post_id>')
 @login_required
-def linear_view(thread_id):
-    _thread = Thread.query.filter_by(id=thread_id).first()
-    return render_template('linear_view.html', thread=_thread)
+def linear_view(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    return render_template('linear_view.html', thread=post.thread, search_post_id=post_id)
 
 
 @bp.route('/post/<post_id>')

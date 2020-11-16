@@ -9,6 +9,7 @@
             {% set level = namespace(value=1) %}
             {% for node in [root] recursive %}
                 {% set srpretext = "Level %s - %s of %s." | format(level.value, loop.index, loop.length) %}
+                {% set altposttext = 'Use left and right arrow keys to switch between alternate replies.' if loop.length > 1 else '' %}
                 {% set post = node.val %}
                 {% if node.children|length > 0 %}
                     <li role="treeitem"
@@ -16,7 +17,7 @@
                         aria-setsize="{{ loop.length }}"
                         aria-posinset="{{ loop.index }}"
                         aria-expanded="false">
-                        {% set srposttext = "Use down arrow key to access %s %s." | format(node.children|length, 'children' if node.children|length > 1 else 'child') %}
+                        {% set srposttext = "%s Use down arrow key to access %s %s or up arrow key to go back to parent post." | format(altposttext, node.children|length, 'replies' if node.children|length > 1 else 'reply') %}
                         {% include "_post.html" %}
                         <ul role="group">
                             {% set level.value = level.value + 1 %}
@@ -24,7 +25,7 @@
                         </ul>
                     </li>
                 {% else %}
-                    {% set srposttext = "This post has no children. Use up arrow key to access parent post or home key to access first post." %}
+                    {% set srposttext = "%s This post has no replies. Use up arrow key to go back to parent post or spacebar key to access first post." | format(altposttext) %}
                     <li role="treeitem"
                         aria-level="{{ level.value }}"
                         aria-setsize="{{ loop.length }}"
