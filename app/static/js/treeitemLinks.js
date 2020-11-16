@@ -149,7 +149,6 @@ TreeitemLink.prototype.handleKeydown = function (event) {
   }
   else {
     switch (event.keyCode) {
-      case this.keyCode.SPACE:
       case this.keyCode.RETURN:
         if (this.isExpandable) {
           if (this.isExpanded()) {
@@ -207,8 +206,10 @@ TreeitemLink.prototype.handleKeydown = function (event) {
         flag = true;
         break;
 
+      case this.keyCode.SPACE:
       case this.keyCode.HOME:
         this.tree.setFocusToFirstItem();
+        this.tree.collapseTreeitem(this.tree.firstTreeitem);
         flag = true;
         break;
 

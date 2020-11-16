@@ -7,7 +7,10 @@
     {% if thread.posts[0] %}
         <ul role="tree" aria-labelledby="tree1">
             {% for post in thread.posts %}
-                <li role="treeitem">
+                <li role="treeitem"
+                    aria-level="{{ 1 }}"
+                    aria-setsize="{{ loop.length }}"
+                    aria-posinset="{{ loop.index }}">
                     {% include "_post.html" %}
                 </li>
             {% endfor %}

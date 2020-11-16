@@ -5,6 +5,7 @@
         <h1 id="tree1" autofocus>{{ _('Forum posts that match your search') }}</h1>
         <ul role="tree">
             {% for post in posts %}
+                {% set index, length = loop.index, loop.length %}
                 {% include "_search_post.html" %}
             {% endfor %}
         </ul>

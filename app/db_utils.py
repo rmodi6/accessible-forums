@@ -1,11 +1,14 @@
 import csv
+import ctypes as ct
 
 from tqdm import tqdm
 
 from app import db
 from app.models import User, Post, Thread
 
-BATCH_SIZE = 100
+# csv field limit error fix: https://stackoverflow.com/questions/15063936/csv-error-field-larger-than-field-limit-131072
+csv.field_size_limit(int(ct.c_ulong(-1).value // 2))
+BATCH_SIZE = 10000
 
 
 def load_data_from_file(file_name):

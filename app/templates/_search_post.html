@@ -1,6 +1,9 @@
 <li role="none">
     <a id="{{ post.id }}" role="treeitem"
        href="{{ url_for('main.tree_view', post_id=post.id) }}"
+       aria-level="{{ 1 }}"
+       aria-setsize="{{ length }}"
+       aria-posinset="{{ index }}"
        style="text-decoration: none; margin-bottom: 5px"
     >
         {{ post.display_body(180) }}
