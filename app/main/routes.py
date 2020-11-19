@@ -150,17 +150,23 @@ def thread(thread_id):
     return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
 
 
-@bp.route('/tree?post=<post_id>&thread=<thread_id>')
+@bp.route('/tree/<thread_id>-<post_id>')
 @login_required
 def tree_view(post_id, thread_id):
-    if post_id != 'None':
-        root = Post.query.filter_by(id=post_id).first().get_tree()
-    else:
-        root = Thread.query.filter_by(id=thread_id).first().get_tree()
+    root = Thread.query.filter_by(id=thread_id).first().get_tree()
     return render_template('tree_view.html', root=root, search_post_id=post_id)
 
 
-@bp.route('/linear?post=<post_id>&thread=<thread_id>')
+@bp.route('/tree/slim/<thread_id>-<post_id>')
+@login_required
+def tree_slim(post_id, thread_id):
+    if post_id == 'None':
+        return tree_view(post_id, thread_id)
+    root = Post.query.filter_by(id=post_id).first().get_tree()
+    return render_template('tree_view.html', root=root, search_post_id=post_id)
+
+
+@bp.route('/linear/<thread_id>-<post_id>')
 @login_required
 def linear_view(post_id, thread_id):
     _thread = Thread.query.filter_by(id=thread_id).first()
