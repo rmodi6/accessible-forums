@@ -1,5 +1,15 @@
-<li role="none">
-    <a id="{{ thread.id }}" role="treeitem" href="{{ url_for('main.tree_view', thread_id=thread.id) }}">
-        {{ thread.title if thread.title.rstrip().endswith(('.', '!', '?')) else thread.title + '.' }}
-    </a>
-</li>
+<span id="{{ thread.id }}">
+    <label class="sr-only">{{ threadpretext }}</label>
+    {{ thread.display_title() }}
+    <label class="sr-only">{{ threadposttext }}</label>
+</span>
+{% if posts|length > 0 %}
+    <ul role="group">
+        {% for post in posts %}
+            {% set index, length = loop.index, loop.length %}
+            {% set srpretext = "Level %s - %s of %s." | format(2, loop.index, loop.length) %}
+            {% set srposttext = "Use left and right arrow keys to switch between matching posts or up arrow key to go back to thread. Use enter to see posts related to this post in this thread." %}
+            {% include "_search_post.html" %}
+        {% endfor %}
+    </ul>
+{% endif %}

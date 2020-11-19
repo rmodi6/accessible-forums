@@ -1,12 +1,33 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    {% if posts[0] %}
-        <h1 id="tree1" autofocus>{{ _('Forum posts that match your search') }}</h1>
+    {% if search_dict|length > 0 %}
+        <h1 id="tree1" autofocus>{{ _('Threads and posts that match your search') }}</h1>
         <ul role="tree">
-            {% for post in posts %}
-                {% set index, length = loop.index, loop.length %}
-                {% include "_search_post.html" %}
+            {% for thread, posts in search_dict.items() %}
+                {% set threadpretext = "Level %s - %s of %s." | format(1, loop.index, loop.length) %}
+                {% set altposttext = 'Use left and right arrow keys to switch between threads.' if loop.length > 1 else '' %}
+                {% if posts|length > 0 %}
+                    <li role="treeitem"
+                        aria-level="{{ 1 }}"
+                        aria-setsize="{{ loop.length }}"
+                        aria-posinset="{{ loop.index }}"
+                        aria-expanded="false">
+                        {% set threadposttext = "%s Use down arrow key to access %s matching %s in this thread." | format(altposttext, posts|length, 'posts' if posts|length > 1 else 'post') %}
+                        {% include "_search_thread.html" %}
+                    </li>
+                {% else %}
+                    <li role="none">
+                        <a id="{{ thread.id }}" role="treeitem"
+                           href="{{ url_for('main.tree_view', post_id='None', thread_id=thread.id) }}"
+                           aria-level="{{ 1 }}"
+                           aria-setsize="{{ loop.length }}"
+                           aria-posinset="{{ loop.index }}">
+                            {% set threadposttext = "%s This thread does not have any posts matching your search. Press enter to see all the posts in this thread" | format(altposttext) %}
+                            {% include "_search_thread.html" %}
+                        </a>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% else %}
