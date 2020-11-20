@@ -2,6 +2,7 @@ from datetime import datetime
 from hashlib import md5
 from typing import List
 
+import networkx as nx
 from flask_login import UserMixin
 from sqlalchemy import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -165,24 +166,21 @@ class Post(SearchableMixin, db.Model):
             return self.body[:maxlen] + '...'
         return self.body if self.body.rstrip().endswith(('.', '!', '?')) else self.body + '.'
 
-    def get_tree(self):
-        node = TreeNode(val=self)
-        for child in self.get_children():
-            child_node = child.get_subtree()
-            node.children.append(child_node)
-        parent = self.get_parent()
-        while parent:
-            parent_node = TreeNode(val=parent, children=[node])
-            node = parent_node
-            parent = node.val.get_parent()
-        return node
+    def get_tree_slim(self):
+        tree, root = self.get_tree()
+        subgraph_nodes = []
+        for path in nx.all_simple_paths(tree, root, self):
+            subgraph_nodes.extend(path)
+        queue = [self]
+        while queue:
+            node = queue.pop(0)
+            for child in tree[node]:
+                subgraph_nodes.append(child)
+                queue.append(child)
+        return nx.subgraph(tree, subgraph_nodes), root
 
-    def get_subtree(self):
-        node = TreeNode(val=self)
-        for child in self.get_children():
-            child_node = child.get_subtree()
-            node.children.append(child_node)
-        return node
+    def get_tree(self):
+        return self.thread.get_tree()
 
 
 class Thread(SearchableMixin, db.Model):
@@ -204,16 +202,14 @@ class Thread(SearchableMixin, db.Model):
         return self.title if self.title.rstrip().endswith(('.', '!', '?')) else self.title + '.'
 
     def get_tree(self):
-        return self.posts[0].get_subtree()
-
-
-class TreeNode:
-    """
-        Helper class to generate a tree node
-    """
-
-    def __init__(self, val=None, children=None):
-        if children is None:
-            children = []
-        self.val = val
-        self.children = children
+        queue = list(self.posts)
+        root = queue[0]
+        tree = nx.DiGraph()
+        tree.add_nodes_from(queue)
+        while queue:
+            post = queue.pop(0)
+            if post != root and not post.has_parent():
+                tree.add_edge(root, post)
+            for child_post in post.get_children():
+                tree.add_edge(post, child_post)
+        return tree, root
