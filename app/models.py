@@ -200,6 +200,12 @@ class Thread(SearchableMixin, db.Model):
             question_posts.append(self.posts[0])
         return question_posts
 
+    def display_title(self):
+        return self.title if self.title.rstrip().endswith(('.', '!', '?')) else self.title + '.'
+
+    def get_tree(self):
+        return self.posts[0].get_subtree()
+
 
 class TreeNode:
     """

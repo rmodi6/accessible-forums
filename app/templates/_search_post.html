@@ -1,11 +1,13 @@
 <li role="none">
     <a id="{{ post.id }}" role="treeitem"
-       href="{{ url_for('main.linear_view', post_id=post.id) }}"
-       aria-level="{{ 1 }}"
+       href="{{ url_for('main.linear_view', post_id=post.id, thread_id=post.thread_id) }}"
+       aria-level="{{ 2 }}"
        aria-setsize="{{ length }}"
        aria-posinset="{{ index }}"
        style="text-decoration: none; margin-bottom: 5px"
     >
+        <label class="sr-only">{{ srpretext }}</label>
         {{ post.display_body(180) }}
+        <label class="sr-only">{{ srposttext }}</label>
     </a>
 </li>

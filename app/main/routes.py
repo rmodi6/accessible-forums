@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict, OrderedDict
 from datetime import datetime
 
 from flask import render_template, flash, redirect, url_for, request, g, current_app
@@ -126,10 +127,20 @@ def search():
     if current_app.elasticsearch and current_app.elasticsearch.ping():
         # If elasticsearch is running use elasticsearch query with fuzzy match
         posts, total = Post.search(g.search_form.q.data)
+        threads, total = Thread.search(g.search_form.q.data)
     else:
         # Else use db query with exact match
         posts = Post.query.filter(Post.body.like("%{}%".format(g.search_form.q.data))).all()
-    return render_template('search.html', threads=None, posts=posts)
+        threads = Thread.query.filter(Thread.title.like("%{}%".format(g.search_form.q.data))).all()
+    search_dict = defaultdict(list)
+    for _post in posts:
+        search_dict[_post.thread].append(_post)
+    search_dict = OrderedDict(sorted(search_dict.items(), key=lambda item: -len(item[1])))
+    for _thread in threads:
+        if _thread not in search_dict:
+            search_dict[_thread] = []
+            search_dict.move_to_end(_thread, False)
+    return render_template('search.html', search_dict=search_dict)
 
 
 @bp.route('/thread/<thread_id>')
@@ -139,18 +150,27 @@ def thread(thread_id):
     return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
 
 
-@bp.route('/tree/<post_id>')
+@bp.route('/tree/<thread_id>-<post_id>')
 @login_required
-def tree_view(post_id):
+def tree_view(post_id, thread_id):
+    root = Thread.query.filter_by(id=thread_id).first().get_tree()
+    return render_template('tree_view.html', root=root, search_post_id=post_id)
+
+
+@bp.route('/tree/slim/<thread_id>-<post_id>')
+@login_required
+def tree_slim(post_id, thread_id):
+    if post_id == 'None':
+        return tree_view(post_id, thread_id)
     root = Post.query.filter_by(id=post_id).first().get_tree()
     return render_template('tree_view.html', root=root, search_post_id=post_id)
 
 
-@bp.route('/linear/<post_id>')
+@bp.route('/linear/<thread_id>-<post_id>')
 @login_required
-def linear_view(post_id):
-    post = Post.query.filter_by(id=post_id).first()
-    return render_template('linear_view.html', thread=post.thread, search_post_id=post_id)
+def linear_view(post_id, thread_id):
+    _thread = Thread.query.filter_by(id=thread_id).first()
+    return render_template('linear_view.html', thread=_thread, search_post_id=post_id)
 
 
 @bp.route('/post/<post_id>')
