@@ -157,7 +157,7 @@ def tree_view(post_id, thread_id):
     return render_template('tree_view.html', tree=tree, root=root, search_post_id=post_id)
 
 
-@bp.route('/tree/slim/<thread_id>-<post_id>')
+@bp.route('/tree-slim/<thread_id>-<post_id>')
 @login_required
 def tree_slim(post_id, thread_id):
     if post_id == 'None':

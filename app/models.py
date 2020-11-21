@@ -60,6 +60,12 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+parent_child_post = db.Table(
+    'parent_child_post',
+    db.Column('parent_id', db.String, db.ForeignKey('post.id')),
+    db.Column('child_id', db.String, db.ForeignKey('post.id'))
+)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.String, primary_key=True)
@@ -123,36 +129,31 @@ class Post(SearchableMixin, db.Model):
     user_id = db.Column(db.String, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
     parent_ids = db.Column(db.String(140), index=True)
+    child_posts = db.relationship(
+        'Post', secondary=parent_child_post,
+        primaryjoin=(parent_child_post.c.parent_id == id),
+        secondaryjoin=(parent_child_post.c.child_id == id),
+        backref=db.backref('parent_posts', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
     def has_parent(self):
-        return '-1' not in self.parent_ids
+        return self.parent_posts.count() > 0
 
     def get_parent(self):
-        return Post.query.filter(Post.id == self.parent_ids).first() if self.has_parent() else None
+        return self.parent_posts
 
-    def has_children(self, level=-1):
-        return len(self.get_children(level)) > 0
+    def has_children(self):
+        return self.child_posts.count() > 0
 
-    def get_children(self, level=-1):
-        if level == 1:
-            # if this is the first post in the thread, include orphan posts in children
-            return Post.query.filter(
-                (Post.parent_ids == self.id) |
-                (
-                        (Post.id != self.id) &
-                        (Post.thread_id == self.thread_id) &
-                        (Post.parent_ids.like("%-1"))
-                )
-            ).all()
-        else:
-            # else only include children posts
-            return Post.query.filter_by(parent_ids=self.id).all()
+    def get_children(self):
+        return self.child_posts
 
     def get_siblings(self):
-        siblings = Post.query.filter_by(parent_ids=self.parent_ids).all()
+        siblings = set()
+        for parent_post in self.parent_posts:
+            siblings.update(parent_post.child_posts)
         return list(siblings)
 
     def is_question_post(self):
