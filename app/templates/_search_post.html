@@ -1,6 +1,6 @@
 <li role="none">
     <a id="{{ post.id }}" role="treeitem"
-       href="{{ url_for('main.tree_view', post_id=post.id, thread_id=post.thread_id) }}"
+       href="{{ url_for('main.view', post_id=post.id, thread_id=post.thread_id, v=request.args.get('v')) }}"
        aria-level="{{ 2 }}"
        aria-setsize="{{ length }}"
        aria-posinset="{{ index }}"

@@ -1,7 +1,7 @@
 from flask import request
 from flask_babel import _, lazy_gettext as _l
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 from app.models import User
@@ -35,6 +35,7 @@ class PostForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     q = StringField(_l('Type to search the forum'), validators=[DataRequired()])
+    v = HiddenField(_l('version'), default="1")
 
     def __init__(self, *args, **kwargs):
         if 'formdata' not in kwargs:

@@ -12,22 +12,25 @@ from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
 from app.models import User, Post, Thread
 
 most_recent_url = ''
+version = ''
 
 
-def get_most_recent_url():
-    global most_recent_url
-    return most_recent_url
+def get_most_recent_status():
+    global most_recent_url, version
+    username = current_user.username if current_user else ''
+    return most_recent_url, version, username
 
 
 @bp.before_app_request
 def before_request():
-    global most_recent_url
+    global most_recent_url, version
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
         g.search_form = SearchForm()
     if not (request.path.startswith(('/static', '/favicon', '/logger'))):
         most_recent_url = request.url
+        version = request.args.get("v")
     g.locale = str(get_locale())
 
 
@@ -35,6 +38,8 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    if not request.args.get("v"):
+        return redirect(url_for('main.index', v=g.search_form.v.default))
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
@@ -140,7 +145,7 @@ def search():
         if _thread not in search_dict:
             search_dict[_thread] = []
             search_dict.move_to_end(_thread, False)
-    return render_template('search.html', search_dict=search_dict)
+    return render_template('search.html', title=_('Search Results'), search_dict=search_dict)
 
 
 @bp.route('/thread/<thread_id>')
@@ -148,6 +153,18 @@ def search():
 def thread(thread_id):
     _thread = Thread.query.filter_by(id=thread_id).first()
     return render_template('thread.html', title=_('Posts in this thread'), posts=_thread.posts)
+
+
+@bp.route('/view/<thread_id>-<post_id>')
+@login_required
+def view(post_id, thread_id):
+    version = request.args.get("v") or g.search_form.v.default
+    if version == "3":
+        return tree_slim(post_id, thread_id)
+    elif version == "2":
+        return tree_view(post_id, thread_id)
+    else:
+        return linear_view(post_id, thread_id)
 
 
 @bp.route('/tree/<thread_id>-<post_id>')

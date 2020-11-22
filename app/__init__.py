@@ -47,7 +47,7 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    from app.main.routes import get_most_recent_url
+    from app.main.routes import get_most_recent_status
 
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         if not os.path.exists('logs'):
@@ -61,7 +61,8 @@ def create_app(config_class=Config):
         app.logger.info('Accessible Forums startup')
 
         def on_press(key):
-            app.logger.info(f'[python] {key} in [{get_most_recent_url()}]')
+            url, version, user = get_most_recent_status()
+            app.logger.info(f'[python] | [{user}] | [{version}] | {key} | [{url}]')
 
         global listener
         if not listener and 'python' in app.config['KEYLOGGER']:

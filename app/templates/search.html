@@ -19,7 +19,7 @@
                 {% else %}
                     <li role="none">
                         <a id="{{ thread.id }}" role="treeitem"
-                           href="{{ url_for('main.tree_view', post_id='None', thread_id=thread.id) }}"
+                           href="{{ url_for('main.view', post_id='None', thread_id=thread.id, v=request.args.get('v')) }}"
                            aria-level="{{ 1 }}"
                            aria-setsize="{{ loop.length }}"
                            aria-posinset="{{ loop.index }}">

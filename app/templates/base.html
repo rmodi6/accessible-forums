@@ -30,6 +30,7 @@
                     <form class="navbar-form" method="get" action="{{ url_for('main.search') }}">
                         <div class="form-group" style="display:inline;">
                             <div class="input-group" style="display:table;">
+                                {{ g.search_form.v(class='form-control', value=request.args.get("v") or g.search_form.v.default) }}
                                 <span class="input-group-addon" style="width:1%;" aria-hidden="true">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </span>
@@ -67,7 +68,8 @@
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
     <script type="text/javascript">
-        var username = $("#username").attr("unique_id");
+        const username = $("#username").attr("unique_id");
+        const version = {{ request.args.get("v") or g.search_form.v.default }}
     </script>
     <script src="{{ url_for("static", filename="js/bootstrap-accessibility.min.js") }}"></script>
     <script src="{{ url_for("static", filename="js/treeLinks.js") }}"></script>
