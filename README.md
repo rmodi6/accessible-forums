@@ -1,7 +1,7 @@
 # Accessible Forums
 ## Development guide
 >**Note:** Run all the commands in the project root directory
-- Create a python environment with python 3 using your favorite environment manager. For example, conda users:
+- Create a python 3 environment using your favorite environment manager. For example, conda users:
 ```bash
 conda create -n accessible-forums python=3
 ```
