@@ -2,6 +2,7 @@ from datetime import datetime
 from hashlib import md5
 from typing import List
 
+import networkx as nx
 from flask_login import UserMixin
 from sqlalchemy import Enum
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -57,6 +58,12 @@ followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
+
+parent_child_post = db.Table(
+    'parent_child_post',
+    db.Column('parent_id', db.String, db.ForeignKey('post.id')),
+    db.Column('child_id', db.String, db.ForeignKey('post.id'))
 )
 
 
@@ -122,36 +129,31 @@ class Post(SearchableMixin, db.Model):
     user_id = db.Column(db.String, db.ForeignKey('user.id'))
     thread_id = db.Column(db.String, db.ForeignKey('thread.id'))
     parent_ids = db.Column(db.String(140), index=True)
+    child_posts = db.relationship(
+        'Post', secondary=parent_child_post,
+        primaryjoin=(parent_child_post.c.parent_id == id),
+        secondaryjoin=(parent_child_post.c.child_id == id),
+        backref=db.backref('parent_posts', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
     def has_parent(self):
-        return '-1' not in self.parent_ids
+        return self.parent_posts.count() > 0
 
     def get_parent(self):
-        return Post.query.filter(Post.id == self.parent_ids).first() if self.has_parent() else None
+        return self.parent_posts
 
-    def has_children(self, level=-1):
-        return len(self.get_children(level)) > 0
+    def has_children(self):
+        return self.child_posts.count() > 0
 
-    def get_children(self, level=-1):
-        if level == 1:
-            # if this is the first post in the thread, include orphan posts in children
-            return Post.query.filter(
-                (Post.parent_ids == self.id) |
-                (
-                        (Post.id != self.id) &
-                        (Post.thread_id == self.thread_id) &
-                        (Post.parent_ids.like("%-1"))
-                )
-            ).all()
-        else:
-            # else only include children posts
-            return Post.query.filter_by(parent_ids=self.id).all()
+    def get_children(self):
+        return self.child_posts
 
     def get_siblings(self):
-        siblings = Post.query.filter_by(parent_ids=self.parent_ids).all()
+        siblings = set()
+        for parent_post in self.parent_posts:
+            siblings.update(parent_post.child_posts)
         return list(siblings)
 
     def is_question_post(self):
@@ -165,24 +167,21 @@ class Post(SearchableMixin, db.Model):
             return self.body[:maxlen] + '...'
         return self.body if self.body.rstrip().endswith(('.', '!', '?')) else self.body + '.'
 
-    def get_tree(self):
-        node = TreeNode(val=self)
-        for child in self.get_children():
-            child_node = child.get_subtree()
-            node.children.append(child_node)
-        parent = self.get_parent()
-        while parent:
-            parent_node = TreeNode(val=parent, children=[node])
-            node = parent_node
-            parent = node.val.get_parent()
-        return node
+    def get_tree_slim(self):
+        tree, root = self.get_tree()
+        subgraph_nodes = []
+        for path in nx.all_simple_paths(tree, root, self):
+            subgraph_nodes.extend(path)
+        queue = [self]
+        while queue:
+            node = queue.pop(0)
+            for child in tree[node]:
+                subgraph_nodes.append(child)
+                queue.append(child)
+        return nx.subgraph(tree, subgraph_nodes), root
 
-    def get_subtree(self):
-        node = TreeNode(val=self)
-        for child in self.get_children():
-            child_node = child.get_subtree()
-            node.children.append(child_node)
-        return node
+    def get_tree(self):
+        return self.thread.get_tree()
 
 
 class Thread(SearchableMixin, db.Model):
@@ -204,16 +203,14 @@ class Thread(SearchableMixin, db.Model):
         return self.title if self.title.rstrip().endswith(('.', '!', '?')) else self.title + '.'
 
     def get_tree(self):
-        return self.posts[0].get_subtree()
-
-
-class TreeNode:
-    """
-        Helper class to generate a tree node
-    """
-
-    def __init__(self, val=None, children=None):
-        if children is None:
-            children = []
-        self.val = val
-        self.children = children
+        queue = list(self.posts)
+        root = queue[0]
+        tree = nx.DiGraph()
+        tree.add_nodes_from(queue)
+        while queue:
+            post = queue.pop(0)
+            if post != root and not post.has_parent():
+                tree.add_edge(root, post)
+            for child_post in post.get_children():
+                tree.add_edge(post, child_post)
+        return tree, root

@@ -2,16 +2,16 @@
 
 {% block app_content %}
     <h3 id="tree1">
-        {{ root.val.thread.title }}
+        {{ root.thread.title }}
     </h3>
-    {% if root.val %}
+    {% if root %}
         <ul role="tree" aria-labelledby="tree1">
             {% set level = namespace(value=1) %}
             {% for node in [root] recursive %}
                 {% set srpretext = "Level %s - %s of %s." | format(level.value, loop.index, loop.length) %}
                 {% set altposttext = 'Use left and right arrow keys to switch between alternate replies.' if loop.length > 1 else '' %}
-                {% set post = node.val %}
-                {% if node.children|length > 0 %}
+                {% set post = node %}
+                {% if tree[node]|length > 0 %}
                     <li role="treeitem"
                         aria-level="{{ level.value }}"
                         aria-setsize="{{ loop.length }}"
@@ -21,7 +21,7 @@
                         {% include "_post.html" %}
                         <ul role="group">
                             {% set level.value = level.value + 1 %}
-                            {{ loop(node.children) }}
+                            {{ loop(tree[node]) }}
                         </ul>
                     </li>
                 {% else %}
