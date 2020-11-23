@@ -139,7 +139,7 @@ def search():
     for _thread in threads:
         if _thread not in search_dict:
             search_dict[_thread] = []
-            search_dict.move_to_end(_thread, False)
+            search_dict.move_to_end(_thread, True)
     return render_template('search.html', search_dict=search_dict)
 
 
