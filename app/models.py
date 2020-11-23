@@ -169,15 +169,9 @@ class Post(SearchableMixin, db.Model):
 
     def get_tree_slim(self):
         tree, root = self.get_tree()
-        subgraph_nodes = []
-        for path in nx.all_simple_paths(tree, root, self):
-            subgraph_nodes.extend(path)
-        queue = [self]
-        while queue:
-            node = queue.pop(0)
-            for child in tree[node]:
-                subgraph_nodes.append(child)
-                queue.append(child)
+        subgraph_nodes = nx.ancestors(tree, self)
+        subgraph_nodes.update(nx.descendants(tree, self))
+        subgraph_nodes.add(self)
         return nx.subgraph(tree, subgraph_nodes), root
 
     def get_tree(self):
