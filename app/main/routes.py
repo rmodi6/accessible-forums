@@ -145,7 +145,12 @@ def search():
         if _thread not in search_dict:
             search_dict[_thread] = []
             search_dict.move_to_end(_thread, True)
-    return render_template('search.html', title=_('Search Results'), search_dict=search_dict)
+    trimmed_dict = OrderedDict()
+    for key, value in search_dict.items():
+        trimmed_dict[key] = value
+        if len(trimmed_dict) >= 10:
+            break
+    return render_template('search.html', title=_('Search Results'), search_dict=trimmed_dict)
 
 
 @bp.route('/thread/<thread_id>')
