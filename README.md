@@ -17,7 +17,8 @@ pip install -r requirements.txt
 ```bash
 flask db upgrade
 ```
-- Before loading data into the database, copy the data files into the project root directory.
+- Before loading data into the database, copy the data files into the project root directory. The compressed data 
+directory can be downloaded [here](https://drive.google.com/uc?export=download&id=1grOjuzYedwTrJ3-GTQqkMpegPCc3aT4a).
 ```bash
 cp -r /path/to/data/directory ./
 ```
@@ -26,14 +27,12 @@ cp -r /path/to/data/directory ./
 📦accessible-forums  
  ┣ 📂app  
  ┣ 📂data  
- ┃ ┣ 📂JAWS  
- ┃ ┃ ┗ 📜...csv files  
- ┃ ┗ 📂NVDA  
- ┃ ┃ ┗ 📜...csv files  
+ ┃ ┣ 📜...csv files  
+ ┃ ┗ 📂folder (optional)  
+ ┃   ┗ 📜...csv files  
  ┣ 📂migrations  
  ┣ 📜.env  
  ┣ 📜.gitignore  
- ┣ 📜app.db  
  ┣ 📜babel.cfg  
  ┣ 📜config.py  
  ┣ 📜main.py  
