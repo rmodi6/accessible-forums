@@ -145,12 +145,9 @@ def search():
         if _thread not in search_dict:
             search_dict[_thread] = []
             search_dict.move_to_end(_thread, True)
-    trimmed_dict = OrderedDict()
-    for key, value in search_dict.items():
-        trimmed_dict[key] = value
-        if len(trimmed_dict) >= 10:
-            break
-    return render_template('search.html', title=_('Search Results'), search_dict=trimmed_dict)
+    n = request.args.get('n', len(search_dict), type=int)
+    return render_template('search.html', title=_('Search Results'),
+                           search_dict=OrderedDict(list(search_dict.items())[:n]))
 
 
 @bp.route('/thread/<thread_id>')
@@ -163,13 +160,16 @@ def thread(thread_id):
 @bp.route('/view/<thread_id>-<post_id>')
 @login_required
 def view(post_id, thread_id):
-    version = request.args.get("v") or g.search_form.v.default
-    if version == "3":
-        return tree_slim(post_id, thread_id)
-    elif version == "2":
-        return tree_view(post_id, thread_id)
-    else:
+    version = request.args.get("v", type=str) or g.search_form.v.default
+    version = version.lower()
+    if version == "linear":
         return linear_view(post_id, thread_id)
+    elif version == "tree":
+        return tree_view(post_id, thread_id)
+    elif version == "slim":
+        return tree_slim(post_id, thread_id)
+    else:
+        return redirect(url_for('main.view', post_id=post_id, thread_id=thread_id, v=g.search_form.v.default))
 
 
 @bp.route('/tree/<thread_id>-<post_id>')
