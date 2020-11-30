@@ -287,6 +287,19 @@ TreeLinks.prototype.setFocusByFirstCharacter = function (currentItem, char) {
   }
 };
 
+TreeLinks.prototype.setFocusById = function (currentItem, id) {
+  for (let i = 0; i < this.treeitems.length; i++) {
+    const ti = this.treeitems[i];
+    if (ti.domNode.firstElementChild.id === id) {
+      if (!ti.isVisible) {
+        this.makeTreeItemVisible(ti.groupTreeitem);
+      }
+      this.setFocusToItem(ti);
+      break;
+    }
+  }
+};
+
 TreeLinks.prototype.getIndexFirstChars = function (startIndex, char) {
   for (var i = startIndex; i < this.firstChars.length; i++) {
     if (this.treeitems[i].isVisible) {
@@ -296,4 +309,11 @@ TreeLinks.prototype.getIndexFirstChars = function (startIndex, char) {
     }
   }
   return -1;
+};
+
+TreeLinks.prototype.makeTreeItemVisible = function (currentItem) {
+  if (!currentItem.isVisible) {
+    this.makeTreeItemVisible(currentItem.groupTreeitem);
+  }
+  this.expandTreeitem(currentItem);
 };

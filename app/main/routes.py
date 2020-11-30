@@ -160,7 +160,7 @@ def thread(thread_id):
 @bp.route('/view/<thread_id>-<post_id>')
 @login_required
 def view(post_id, thread_id):
-    version = request.args.get("v", type=str) or g.search_form.v.default
+    version = request.args.get("v", type=str, default=g.search_form.v.default)
     version = version.lower()
     if version == "linear":
         return linear_view(post_id, thread_id)

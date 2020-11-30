@@ -122,6 +122,10 @@ TreeitemLink.prototype.handleKeydown = function (event) {
       item.tree.expandAllSiblingItems(item);
       flag = true;
     }
+    else if (char == '?' && searchPostId && searchPostId !== 'None') {
+      item.tree.setFocusById(item, searchPostId);
+      flag = true;
+    }
     else {
       if (isPrintableCharacter(char)) {
         item.tree.setFocusByFirstCharacter(item, char);
