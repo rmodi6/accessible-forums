@@ -1,6 +1,7 @@
 import ast
 import csv
 import ctypes as ct
+from datetime import datetime
 
 from tqdm import tqdm
 
@@ -21,15 +22,16 @@ def load_data_from_file(file_name):
                 if index > 0:
                     [thread, date_time, author, post, parent_posts, post_id, default_parent_id, thread_id, author_id,
                      origin_id, label, parent_ids] = row
+                    date_time = datetime.fromisoformat(date_time)
                     if not parent_ids.lstrip().startswith('['):
                         parent_ids = '["' + parent_ids + '"]'
-                    if author not in user_ids:
+                    if author_id not in user_ids:
                         user = User(id=author_id, username=author, email='abc@xyz.com')
                         user.set_password('abc123')
                         db.session.add(user)
-                        user_ids.add(author)
+                        user_ids.add(author_id)
                     if post_id not in post_ids:
-                        post = Post(id=post_id, body=post, user_id=author_id, thread_id=thread_id,
+                        post = Post(id=post_id, body=post, timestamp=date_time, user_id=author_id, thread_id=thread_id,
                                     parent_ids=parent_ids, label=label)
                         db.session.add(post)
                         post_ids.add(post_id)
