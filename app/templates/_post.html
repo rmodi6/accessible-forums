@@ -1,13 +1,13 @@
 <span id="{{ post.id }}">
     <label class="sr-only">{{ srpretext }}</label>
-    {% set post_body = '%s : %s' | format(post.author.username, post.display_body()) %}
+    {% set post_body = '<strong>%s</strong> : %s' | format(post.author.username, post.display_body()) %}
     {% if post.id == search_post_id %}
         <mark>
             <label class="sr-only">{{ 'This is the search result post.' }}</label>
-            {{ post_body }}
+            <strong>{{ post.author.username }}</strong> : {{ post.display_body() }}
         </mark>
     {% else %}
-        {{ post_body }}
+        <strong>{{ post.author.username }}</strong> : {{ post.display_body() }}
     {% endif %}
     <label class="sr-only">{{ srposttext }}</label>
 </span>
