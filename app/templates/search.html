@@ -2,7 +2,7 @@
 
 {% block app_content %}
     {% if search_dict|length > 0 %}
-        <h1 id="tree1" autofocus>{{ _('Threads and posts that match your search') }}</h1>
+        <h1 id="tree1" autofocus>{{ _('Results that match your search') }}</h1>
         <ul role="tree">
             {% for thread, posts in search_dict.items() %}
                 {% set threadpretext = "Level %s - %s of %s." | format(1, loop.index, loop.length) %}
@@ -31,6 +31,6 @@
             {% endfor %}
         </ul>
     {% else %}
-        <h1 autofocus>{{ _('No posts match your search term. Try searching something else.') }}</h1>
+        <h1 autofocus>{{ _('No matching results found. Try searching something else.') }}</h1>
     {% endif %}
 {% endblock %}
