@@ -20,11 +20,11 @@ def load_data_from_file(file_name):
         for row in tqdm(csv.reader(f)):
             try:
                 if index > 0:
-                    [thread, date_time, author, post, parent_posts, post_id, default_parent_id, thread_id, author_id,
-                     origin_id, label, parent_ids] = row
+                    [thread, date_time, author, post, parent_posts, post_id, thread_id, author_id, origin_id, label,
+                     parent_ids] = row
                     date_time = datetime.fromisoformat(date_time)
                     if not parent_ids.lstrip().startswith('['):
-                        parent_ids = '["' + parent_ids + '"]'
+                        parent_ids = '[' + parent_ids + ']'
                     if author_id not in user_ids:
                         user = User(id=author_id, username=author, email='abc@xyz.com')
                         user.set_password('abc123')
@@ -41,7 +41,8 @@ def load_data_from_file(file_name):
                         thread_ids.add(thread_id)
                     if '-1' not in parent_ids:
                         for parent_id in ast.literal_eval(parent_ids):
-                            db.engine.execute(parent_child_post.insert().values(parent_id=parent_id, child_id=post_id))
+                            db.engine.execute(
+                                parent_child_post.insert().values(parent_id=str(parent_id), child_id=post_id))
 
                     if index % BATCH_SIZE == 0:
                         db.session.commit()
