@@ -288,7 +288,8 @@ TreeLinks.prototype.setFocusByFirstCharacter = function (currentItem, char) {
 };
 
 TreeLinks.prototype.setFocusById = function (currentItem, id) {
-  for (let i = 0; i < this.treeitems.length; i++) {
+  const start = this.treeitems.indexOf(currentItem);
+  for (let i = (start+1) % this.treeitems.length; i !== start; i = (i+1) % this.treeitems.length) {
     const ti = this.treeitems[i];
     if (ti.domNode.firstElementChild.id === id) {
       if (!ti.isVisible) {
