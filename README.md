@@ -54,3 +54,6 @@ On a local network (WiFi), you can access the website through any device on the 
 ip address of the machine. E.g. If your machine has the local ip address 192.168.0.2, you can access the website using 
 http://192.168.0.2:5000/. Use the `ifconfig` command on UNIX machines and `ipconfig` command on Windows machines to get 
 the local ip address of the device.
+
+## Credits
+This project is heavily adopted from the excellent [Flask Mega-Tutorial by Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world).
