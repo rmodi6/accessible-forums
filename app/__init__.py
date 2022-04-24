@@ -10,7 +10,6 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
-from pynput import keyboard
 
 from config import Config
 
@@ -52,12 +51,17 @@ def create_app(config_class=Config):
     from app.main.routes import get_most_recent_status
 
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/app.log')
-        file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
+        if app.config['LOG_TO_STDOUT']:
+            stream_handler = logging.StreamHandler()
+            stream_handler.setLevel(logging.INFO)
+            app.logger.addHandler(stream_handler)
+        else:
+            if not os.path.exists('logs'):
+                os.mkdir('logs')
+            file_handler = RotatingFileHandler('logs/app.log')
+            file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s'))
+            file_handler.setLevel(logging.INFO)
+            app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
         app.logger.info('Accessible Forums startup')
@@ -68,6 +72,7 @@ def create_app(config_class=Config):
 
         global listener
         if not listener and 'python' in app.config['KEYLOGGER']:
+            from pynput import keyboard
             listener = keyboard.Listener(on_press=on_press)
             listener.start()
 

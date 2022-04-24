@@ -35,7 +35,7 @@ class PostForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     q = StringField(_l('Type to search the forum'), validators=[DataRequired()])
-    v = HiddenField(_l('version'), default="linear")
+    v = HiddenField(_l('version'), default="tree")
     n = HiddenField(_l('Number of search results'), default=10)
 
     def __init__(self, *args, **kwargs):

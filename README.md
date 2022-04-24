@@ -1,4 +1,10 @@
 # Accessible Forums
+
+## Website
+This app has been deployed to [Heroku](https://www.heroku.com/) and is available at: https://accessible-forums.herokuapp.com/.  
+For the best experience, do not use a mouse and use only the keyboard shortcuts along with a screen reader like NVDA or JAWS. If on a mobile device, use the appropriate accessibility tool based on your OS: Talkback on Android and VoiceOver on iOS.  
+>**Note:** There is no elasticsearch server connected to the Heroku app because of which fuzzy and fast search is disabled.
+
 ## Development guide
 >**Note:** Run all the commands in the project root directory
 - Create a python 3 environment using your favorite environment manager. For example, conda users:
