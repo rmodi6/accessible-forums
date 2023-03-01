@@ -1,9 +1,11 @@
 # Accessible Forums
 
 ## Website
-This app has been deployed to [Heroku](https://www.heroku.com/) and is available at: https://accessible-forums.herokuapp.com/.  
-For the best experience, do not use a mouse and use only the keyboard shortcuts along with a screen reader like NVDA or JAWS. If on a mobile device, use the appropriate accessibility tool based on your OS: Talkback on Android and VoiceOver on iOS.  
->**Note:** There is no elasticsearch server connected to the Heroku app because of which fuzzy and fast search is disabled.
+~~This app has been deployed to [Heroku](https://www.heroku.com/) and is available at: https://accessible-forums.herokuapp.com/.  
+For the best experience, do not use a mouse and use only the keyboard shortcuts along with a screen reader like NVDA or JAWS. If on a mobile device, use the appropriate accessibility tool based on your OS: Talkback on Android and VoiceOver on iOS.~~  
+>~~**Note:** There is no elasticsearch server connected to the Heroku app because of which fuzzy and fast search is disabled.~~  
+
+The website is down now as Heroku [no longer offers free Heroku Postgres server](https://blog.heroku.com/next-chapter).
 
 ## Development guide
 >**Note:** Run all the commands in the project root directory
